@@ -1,16 +1,24 @@
 const express = require('express');
-const { PORT } = require('./util/loadEnv');
+const { PORT, CLIENTORIGIN } = require('./util/loadEnv');
 const { User, userService } = require('./services/userService');
 
-// const app = express();
+const cors = require('cors');
+const app = express();
 
-// app.get('/', (req, res) => {
-//   res.send('Hello World!')
-// })
+// Allow only client to access resources
+// Define client origin in .env
+var corsOptions = {
+  origin: CLIENTORIGIN,
+  methods: ["GET", "POST"],
+  credentials: true,
+}
 
-// app.listen(PORT, () => {
-//   console.log(`Example app listening on port ${port}`)
-// })
+app.use(cors(corsOptions));
 
-let test = new User("Test", "volunteer");
-userService.createUser(test);
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+})
+
+app.listen(PORT, () => {
+  console.log(`Server started on port ${PORT}`)
+})

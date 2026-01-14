@@ -23,4 +23,10 @@ if(!process.env.MONGODBSTRING) {
     var MONGODBSTRING = process.env.MONGODBSTRING;
 }
 
-module.exports = {PORT, MONGODBSTRING};
+if(!process.env.CLIENTORIGIN) {
+    throw new Error("Client origin not specified in .env, this is required for CORS");
+} else {
+    var CLIENTORIGIN = process.env.CLIENTORIGIN;
+}
+
+module.exports = {PORT, MONGODBSTRING, CLIENTORIGIN};
