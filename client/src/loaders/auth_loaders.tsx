@@ -1,5 +1,3 @@
-import AuthService from "../services/AuthService"
-
 type userTypes = "admin" | "participant" | "volunteer" | null
 
 /**
