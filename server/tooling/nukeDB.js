@@ -1,6 +1,9 @@
-const { MongoClient, ServerApiVersion } = require('mongodb');
-const { MONGODBSTRING } = require('../util/loadEnv');
+/**
+ * Helper script to nuke DB
+ */
+
 const readline = require('node:readline');
+const { dbClient } = require('../lib/dbClient');
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -12,45 +15,38 @@ rl.question(`Are you SURE you want to NUKE the DB? Type 'y' to confirm`, res => 
     if(res != 'y') {
         console.log("Aborting...");
     } else {
-        setup();
+        run();
     }
 });
 
-function setup() {
-    console.log("Proceeding to nuke DB...");
+// function setup() {
+//     console.log("Proceeding to nuke DB...");
 
-    console.log(`Found MongoDB connection string: ${MONGODBSTRING.substring(0, 15)}...`);
-    console.log("Creating client...");
+//     console.log(`Found MongoDB connection string: ${MONGODBSTRING.substring(0, 15)}...`);
+//     console.log("Creating client...");
 
-    var uri = MONGODBSTRING;
+//     var uri = MONGODBSTRING;
 
-    const client = new MongoClient(uri, {
-    serverApi: {
-        version: ServerApiVersion.v1,
-        strict: true,
-        deprecationErrors: true,
+//     const client = new MongoClient(uri, {
+//     serverApi: {
+//         version: ServerApiVersion.v1,
+//         strict: true,
+//         deprecationErrors: true,
+//     }
+//     });
+
+//     console.log("Client created");
+
+//     run(client).then(() => process.exit());
+// }
+
+async function run() {
+    console.log("Dropping dev database");
+    const result = await dbClient.dropDatabase();
+    if(result) {
+        console.log("Dropped dev database");
+    } else {
+        console.log("Uh oh something went wrong");
     }
-    });
-
-    console.log("Client created");
-
-    run(client).then(() => process.exit());
-}
-
-async function run(client) {
-    try {
-        console.log("Dropping dev database");
-        const dev = client.db("dev");
-        const result = await dev.dropDatabase();
-        if(result) {
-            console.log("Dropped dev database");
-        } else {
-            console.log("Uh oh something went wrong");
-        }
-
-    } finally {
-        console.log("Closing MongoDB client");
-        await client.close();
-        console.log("Closed");
-    }
+    process.exit();
 }
