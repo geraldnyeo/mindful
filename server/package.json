@@ -8,9 +8,13 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node app.js"
+    "dev": "node app.js",
+    "populate-db": "node tooling/populateDB.js",
+    "nuke-db": "node tooling/nukeDB.js",
+    "nuke-populate-db": "node tooling/nukeDB.js && node tooling/populateDB.js"
   },
   "dependencies": {
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "mongodb": "^7.0.0"
   }
 }
