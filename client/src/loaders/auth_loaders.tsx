@@ -1,3 +1,5 @@
+import AuthService from "../services/AuthService"
+
 type userTypes = "admin" | "participant" | "volunteer" | null
 
 /**
@@ -5,7 +7,7 @@ type userTypes = "admin" | "participant" | "volunteer" | null
  * @returns {{ userType: userTypes }} The type of user
  */
 function indexLoader(): { userType: userTypes } {
-  return { userType: "admin" }
+    return { userType: "admin" }
 }
 
 /**
@@ -13,7 +15,7 @@ function indexLoader(): { userType: userTypes } {
  * @returns {{ userType: userTypes }} The type of user
  */
 function protectedRoute(): { userType: userTypes } {
-  return { userType: "admin" }
+    return { userType: "admin" }
 }
 
 /**

@@ -30,7 +30,7 @@ const router = createBrowserRouter([
           // Routes which are available to all users
           { 
             path: "dashboard",
-            Component: DashboardComponent()
+            Component: DashboardComponent
           },
           // Routes available to admin only
           {
