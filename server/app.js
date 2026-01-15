@@ -5,6 +5,7 @@ const { PORT, CLIENTORIGIN } = require('./util/loadEnv');
 const { User, userService } = require('./services/userService');
 
 const cors = require('cors');
+const { authService } = require('./services/authService');
 const app = express();
 
 // Allow only client to access resources
@@ -31,4 +32,4 @@ const httpsServer = https.createServer(httpsOptions, app);
 
 httpsServer.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`)
-})
+});

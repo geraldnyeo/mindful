@@ -14,6 +14,7 @@
     "nuke-populate-db": "node tooling/nukeDB.js && node tooling/populateDB.js"
   },
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "express": "^5.2.1",
     "mongodb": "^7.0.0"

@@ -11,16 +11,16 @@ async function run() {
     const activities = dbClient.collection("activities");
 
     const userData = [
-        new User("Alice", "staff"),
-        new User("Bob", "volunteer"),
-        new User("Charlie", "participant"),
-        new User("Dexter", "staff"),
-        new User("Eve", "staff"),
-        new User("Foxie", "volunteer"),
-        new User("Garfield", "volunteer"),
-        new User("Hi", "participant"),
-        new User("Jonkler", "staff"),
-        new User("Kale", "participant")
+        new User("Alice", "alice@ok.com", "staff", "abc"),
+        new User("Bob", "bob@d.com", "volunteer", "def"),
+        new User("Charlie", "charlie@c.com", "participant", "efg"),
+        new User("Dexter", "d@d.com", "staff", "hunter2"),
+        new User("Eve", "eevee@pokemon.net", "staff", "hunter3"),
+        new User("Foxie", "f@f.com", "volunteer", "hunter4"),
+        new User("Garfield", "ihatemondays@garf.com", "volunteer", "hunter5"),
+        new User("Hi", "ok@ok.com", "participant", "ok"),
+        new User("Jonkler", "whysoserious@haha.ha", "staff", "byebye"),
+        new User("Kale", "cabbage@leaf.com", "participant", "ok2")
     ];
     
     {
