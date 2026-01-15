@@ -7,6 +7,7 @@ import DefaultLayout from "./layouts/DefaultLayout/DefaultLayout"
 import LandingPage from "./pages/LandingPage/LandingPage"
 import Login from "./pages/Login/Login"
 import Signup from "./pages/Signup/Signup"
+import ErrorPage from "./pages/ErrorPage/ErrorPage"
 
 import './index.css'
 
@@ -59,6 +60,12 @@ const router = createBrowserRouter([
           { path: "login", Component: Login },
           { path: "signup", Component: Signup }
         ]
+      },
+      {
+	path: "error",
+	children: [
+	  { path: ":statusCode", Component: ErrorPage }
+	]
       }
     ]
   }

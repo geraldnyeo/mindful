@@ -1,3 +1,5 @@
+import { Link } from "react-router"
+
 import "./navbar.css"
 
 type NavbarProps = {
@@ -7,8 +9,10 @@ type NavbarProps = {
 function Navbar({ userType }: NavbarProps) {
     return (
         <nav>
+	    <Link to="/dashboard">Home</Link>
+	    <Link to="/calendar">Events</Link>
             { userType === "admin" && 
-                <p>Admin-only Link here</p>
+                <Link to="/analytics">Analytics</Link>
             }
         </nav>
     )

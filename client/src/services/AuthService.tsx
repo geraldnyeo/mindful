@@ -1,6 +1,4 @@
-import axios from "axios"
-
-const API_URL = import.meta.env.VITE_API_URL
+import api from "./HTTPService"
 
 interface SignupData {
     username: string,
@@ -21,7 +19,7 @@ class AuthService {
      * Sends signup request to backend
      */
     signup(data: SignupData) {
-        axios.post(`${API_URL}/signup`, data)
+        api.post("signup", data)
         .then(res => {
             console.log(res);
             // TODO: Status handling
@@ -36,7 +34,7 @@ class AuthService {
      * Sends login request to backend
      */
     login(data: LoginData) {
-        axios.post(`${API_URL}/signup`, data)
+        api.post("login", data)
         .then(res => {
             console.log(res)
             // TODO: Status handling

@@ -1,6 +1,4 @@
-import axios from "axios"
-
-const API_URL = import.meta.env.VITE_API_URL
+import api from "./HTTPService"
 
 /**
  * Data Service
@@ -11,8 +9,8 @@ class DataService {
      * Get event calendar details by month
      * @param month 
      */
-    getAdminEventByMonth(month: any) {
-
+    getEventsByMonthAdmin(month: any) {
+	
     }
 }
 
