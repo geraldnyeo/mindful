@@ -1,5 +1,6 @@
 const { ObjectId } = require("mongodb");
 const { dbClient } = require("../lib/dbClient");
+const { authService } = require("./authService");
 
 /**
  * Helper class for validation of user role
@@ -22,9 +23,13 @@ class UserRole {
  * User of the website
  */
 class User {
-    constructor(name, role, id=null) {
+    constructor(name, email, role, pw=null, pwHashed = false, id=null) {
         this.name = name;
+        this.email = email;
         this.id = id;
+        if(!pwHashed && pw !== null) {
+            this.pw = authService.hashPassword(pw);
+        }
         UserRole.validate(role);
         this.role = role;
         this.joinedDate = new Date();
@@ -37,6 +42,8 @@ class User {
     toDBJSON() {
         let out = {
             name: this.name,
+            email: this.email,
+            pw: this.pw,
             role: this.role,
             joinedDate: this.joinedDate
         }
