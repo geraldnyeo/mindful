@@ -9,10 +9,13 @@ import Login from "./pages/Login/Login"
 import Signup from "./pages/Signup/Signup"
 import ErrorPage from "./pages/ErrorPage/ErrorPage"
 
+import CalendarPage from "./pages/CalendarPage/CalendarPage"
+
 import './index.css'
 
 import { DashboardComponent } from "./loaders/conditional_components"
-import { indexLoader, protectedRoute, adminRoute, participantRoute, volunteerRoute } from "./loaders/auth_loaders"
+import { protectedRoute, adminRoute, participantRoute, volunteerRoute } from "./loaders/auth_loaders"
+import { indexLoader, dashboardLoader, calendarLoader } from "./loaders/page_loaders"
 
 const router = createBrowserRouter([
   {
@@ -31,8 +34,14 @@ const router = createBrowserRouter([
           // Routes which are available to all users
           { 
             path: "dashboard",
+	    loader: dashboardLoader,
             Component: DashboardComponent
           },
+	  {
+	    path: "calendar",
+	    loader: calendarLoader,
+	    Component: CalendarPage
+	  },
           // Routes available to admin only
           {
             path: "admin",

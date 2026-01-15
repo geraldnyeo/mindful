@@ -1,4 +1,4 @@
-import { useLoaderData } from "react-router";
+import { useLoaderData, useRouteLoaderData } from "react-router";
 
 import AdminDashboard from "../pages/AdminDashboard/AdminDashboard";
 import ParticipantDashboard from "../pages/ParticipantDashboard/ParticipantDashboard";

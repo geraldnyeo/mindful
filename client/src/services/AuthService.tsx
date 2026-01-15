@@ -56,3 +56,8 @@ class AuthService {
 }
 
 export default new AuthService()
+
+export {
+    SignupData,
+    LoginData
+}

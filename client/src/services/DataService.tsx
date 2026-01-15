@@ -1,5 +1,10 @@
 import api from "./HTTPService"
 
+interface Event {
+    date: string
+    name: string
+}
+
 /**
  * Data Service
  * Handles loading of event details, etc.
