@@ -1,6 +1,7 @@
 const { ObjectId } = require("mongodb");
 const { dbClient } = require("../lib/dbClient");
 const { authService } = require("./authService");
+const { hasString, hasDate } = require("../util/checkProperty");
 
 /**
  * Helper class for validation of user role
@@ -19,20 +20,50 @@ class UserRole {
     }
 }
 
+const userOptionsDefault = {
+    pw: null,
+    pwHashed: false,
+    joinedDate: null,
+    id: null
+}
+
 /**
  * User of the website
  */
 class User {
-    constructor(name, email, role, pw=null, pwHashed = false, id=null) {
+    static fromDBJSON(document) {
+        if(!hasString(document, "name") ||
+           !hasString(document, "email") ||
+           !hasString(document, "role") ||
+           !hasDate(document, "joinedDate")) {
+            console.error(document);
+            throw new Error("Invalid document, missing fields for User");   
+        }
+
+        return new User(document.name, 
+                        document.email, 
+                        document.role,
+                        {
+                            id: document._id.toString(),
+                            joinedDate: document.joinedDate
+                        });
+    }
+
+    constructor(name, email, role, options = userOptionsDefault) {
+        options = {...userOptionsDefault, ...options};
         this.name = name;
         this.email = email;
-        this.id = id;
-        if(!pwHashed && pw !== null) {
-            this.pw = authService.hashPassword(pw);
+        this.id = options.id;
+        if(!options.pwHashed && options.pw !== null) {
+            this.pw = authService.hashPassword(options.pw);
         }
         UserRole.validate(role);
         this.role = role;
-        this.joinedDate = new Date();
+        if(options.joinedDate) {
+            this.joinedDate = options.joinedDate;
+        } else {
+            this.joinedDate = new Date();
+        }
     }
 
     /**
@@ -43,13 +74,27 @@ class User {
         let out = {
             name: this.name,
             email: this.email,
-            pw: this.pw,
             role: this.role,
             joinedDate: this.joinedDate
+        }
+        if(this.pw != null) {
+            out["pw"] = this.pw;
         }
         if(this.id != null) {
             out["_id"] = ObjectId(this.id);
         }
+        return out;
+    }
+
+    toClientJSONBasic() {
+        let out = {
+            id: this.id,
+            name: this.name,
+            email: this.email,
+            role: this.role,
+            joinedDate: this.joinedDate
+        }
+
         return out;
     }
 }
@@ -67,8 +112,9 @@ class UserService {
             throw new Error("User object is not of correct type");
         }
         let users = dbClient.collection("users");
-        await users.insertOne(user.toDBJSON());
+        let res = await users.insertOne(user.toDBJSON());
         console.log("Created user");
+        return res;
     }
 
     /**
@@ -82,6 +128,18 @@ class UserService {
             throw new Error("Failed to delete user or user does not exist");
         }
         console.log("Deleted user");
+    }
+
+    async getUser(id) {
+        let users = dbClient.collection("users");
+        let res = await users.findOne({_id: new ObjectId(id)});
+        return res;
+    }
+
+    async getUserByEmail(email) {
+        let users = dbClient.collection("users");
+        let res = await users.findOne({email: email});
+        return res;
     }
 }
 

@@ -29,4 +29,10 @@ if(!process.env.CLIENTORIGIN) {
     var CLIENTORIGIN = process.env.CLIENTORIGIN;
 }
 
-module.exports = {PORT, MONGODBSTRING, CLIENTORIGIN};
+if(!process.env.JWTSECRET) {
+    throw new Error("JWT secret not specified in .env");
+} else {
+    var JWTSECRET = new TextEncoder().encode(process.env.JWTSECRET);
+}
+
+module.exports = {PORT, MONGODBSTRING, CLIENTORIGIN, JWTSECRET};
