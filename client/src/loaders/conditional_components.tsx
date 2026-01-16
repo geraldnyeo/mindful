@@ -42,5 +42,6 @@ function CalendarComponent() {
 }
 
 export {
-    DashboardComponent
+    DashboardComponent,
+    CalendarComponent
 }

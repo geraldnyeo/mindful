@@ -1,5 +1,7 @@
-// TODO: Import this from UserService
-type userTypes = "admin" | "participant" | "volunteer" | null
+import type { LoaderFunctionArgs } from "react-router-dom"
+
+import type { Event } from "../services/DataService"
+import type { userTypes } from "../services/UserService"
 
 /**
  * Redirect to /dashboard if the user is logged in
@@ -27,8 +29,20 @@ function calendarLoader() {
     }
 }
 
+/**
+ * Loader for /event/eventid
+ * @returns events //todo
+ */ 
+function eventLoader({ params }: LoaderFunctionArgs) {
+    return {
+	date: "16/01/2026",
+	name: "Nature Walk"
+    }
+}
+
 export {
     indexLoader,
     dashboardLoader,
-    calendarLoader
+    calendarLoader,
+    eventLoader
 }

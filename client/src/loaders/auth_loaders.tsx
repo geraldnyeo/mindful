@@ -1,7 +1,12 @@
+import type { userTypes } from "../services/UserService"
+
 /**
  * Redirects to /login if the user is not logged in
+ * Gets user type for conditional loading
+ * @returns {{ userType: userTypes }} The type of user
  */
-function protectedRoute() {
+function protectedRoute(): { userType: userTypes } {
+    return { userType: "admin" }
 }
 
 /**

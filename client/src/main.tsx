@@ -10,12 +10,13 @@ import Signup from "./pages/Signup/Signup"
 import ErrorPage from "./pages/ErrorPage/ErrorPage"
 
 import CalendarPage from "./pages/CalendarPage/CalendarPage"
+import EventPage from "./pages/EventPage/EventPage"
 
 import './index.css'
 
 import { DashboardComponent } from "./loaders/conditional_components"
 import { protectedRoute, adminRoute, participantRoute, volunteerRoute } from "./loaders/auth_loaders"
-import { indexLoader, dashboardLoader, calendarLoader } from "./loaders/page_loaders"
+import { indexLoader, dashboardLoader, calendarLoader, eventLoader } from "./loaders/page_loaders"
 
 const router = createBrowserRouter([
   {
@@ -41,6 +42,11 @@ const router = createBrowserRouter([
 	    path: "calendar",
 	    loader: calendarLoader,
 	    Component: CalendarPage
+	  },
+	  {
+	    path: "event/:eventid",
+	    loader: eventLoader,
+	    Component: EventPage
 	  },
           // Routes available to admin only
           {
