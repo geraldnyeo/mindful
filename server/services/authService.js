@@ -35,14 +35,21 @@ class AuthService {
 
     async checkPasswordEmail(email, pw) {
         let users = dbClient.collection("users");
-        let hash = (await users.findOne({email: email})).pw;
-        const ok = await this.compareHash(pw, hash);
+        let user = await users.findOne({email: email});
+        if(!user) {
+            return false;
+        }
+        let hash = user.pw;
         return this.compareHash(pw, hash);
     }
 
     async checkPasswordId(id, pw) {
         let users = dbClient.collection("users");
-        let hash = (await users.findOne({_id: id})).pw;
+        let user = await users.findOne({_id: id});
+        if(!user) {
+            return false;
+        }
+        let hash = user.pw;
         return this.compareHash(pw, hash);
     }
 
