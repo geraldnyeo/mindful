@@ -1,6 +1,6 @@
 import api from "./HTTPService"
 
-type Event = {
+interface Event {
     date: string
     name: string
 }

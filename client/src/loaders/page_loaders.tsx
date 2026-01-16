@@ -1,13 +1,13 @@
-import type { LoaderFunctionArgs } from "react-router-dom"
+import type { LoaderFunctionArgs } from "react-router"
 
 import type { Event } from "../services/DataService"
-import type { userTypes } from "../services/UserService"
+import type { userRole } from "../services/UserService"
 
 /**
  * Redirect to /dashboard if the user is logged in
  * @returns {{ userType: userTypes }} The type of user
  */
-function indexLoader(): { userType: userTypes } {
+function indexLoader(): { userType: userRole } {
     return { userType: "admin" }
 }
 
@@ -15,7 +15,7 @@ function indexLoader(): { userType: userTypes } {
  * Gets the user type for conditional loading
  * @returns {{ userType: userTypes }} The type of user
  */
-function dashboardLoader(): { userType: userTypes } {
+function dashboardLoader(): { userType: userRole } {
     return { userType: "admin" }
 }
 
@@ -35,8 +35,8 @@ function calendarLoader() {
  */ 
 function eventLoader({ params }: LoaderFunctionArgs) {
     return {
-	date: "16/01/2026",
-	name: "Nature Walk"
+        date: "16/01/2026",
+        name: "Nature Walk"
     }
 }
 

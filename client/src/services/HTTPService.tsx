@@ -12,10 +12,12 @@ const api = axios.create({
 api.interceptors.response.use(
     res => res,
     err => {
-	if (error.response.status === 401) {
-	    redirect("/error/401-unauthorized")
-	}
-	return Promise.reject(error);
+    if (err.response) {
+        if (err.response.status === 401) {
+            redirect("/error/401-unauthorized")
+        }
+    }
+	return Promise.reject(err);
     }
 )
 

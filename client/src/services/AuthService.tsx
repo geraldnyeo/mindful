@@ -1,13 +1,16 @@
 import api from "./HTTPService"
+import type { User, userRole } from "./UserService"
 
-type SignupData = {
-    username: string,
-    password: string
+interface SignupData {
+    email: string,
+    name: string,
+    pw: string,
+    role: userRole
 }
 
-type LoginData = {
-    username: string,
-    password: string
+interface LoginData {
+    email: string,
+    pw: string
 }
 
 /**
@@ -19,14 +22,15 @@ class AuthService {
      * Sends signup request to backend
      */
     signup(data: SignupData) {
-        api.post("signup", data)
+        api.post("api/auth/signup", data)
         .then(res => {
-            console.log(res);
-            // TODO: Status handling
-            // TODO: Unpack user data, token, and cache them
+            const user: User = res.data;
+            console.log(user);
+            localStorage.setItem('user', JSON.stringify(user));
         })
         .catch(err => {
             console.log(err);
+            // TODO
         })
     }
 
@@ -34,12 +38,14 @@ class AuthService {
      * Sends login request to backend
      */
     login(data: LoginData) {
-        api.post("login", data)
+        api.post("api/auth/login", data)
         .then(res => {
-            console.log(res)
+            const user: User = res.data;
+            localStorage.setItem('user', JSON.stringify(user));
         })
         .catch(err => {
-            console.log(err)
+            console.log(err);
+            // TODO
         })
     }
 
