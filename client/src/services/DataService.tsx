@@ -1,6 +1,6 @@
 import api from "./HTTPService"
 
-interface Event {
+type Event = {
     date: string
     name: string
 }
@@ -20,3 +20,7 @@ class DataService {
 }
 
 export default new DataService()
+
+export type {
+    Event
+}

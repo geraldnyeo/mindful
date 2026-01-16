@@ -1,0 +1,13 @@
+/**
+ * Input Filtering allowing some special characters
+ * @param s string: text string to filter
+ * @return boolean: true if input is safe
+ */
+function filter_input_special(s: string): boolean {
+    const r = /^[a-zA-Z0-9_\-\=\+`~!@#\$%\^&\* ]*$/;
+    return r.test(s);
+}
+
+export {
+    filter_input_special
+}

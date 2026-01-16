@@ -1,11 +1,11 @@
 import api from "./HTTPService"
 
-interface SignupData {
+type SignupData = {
     username: string,
     password: string
 }
 
-interface LoginData {
+type LoginData = {
     username: string,
     password: string
 }
@@ -37,8 +37,6 @@ class AuthService {
         api.post("login", data)
         .then(res => {
             console.log(res)
-            // TODO: Status handling
-            // TODO: Unpack user data, token, and cache them
         })
         .catch(err => {
             console.log(err)
@@ -57,7 +55,7 @@ class AuthService {
 
 export default new AuthService()
 
-export {
+export type {
     SignupData,
     LoginData
 }
