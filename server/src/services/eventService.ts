@@ -1,5 +1,5 @@
-const { ObjectId } = require("mongodb");
-const { dbClient } = require("../lib/dbClient");
+import { ObjectId } from "mongodb";
+import dbClient from "../lib/dbClient.js";
 
 class ActivityDetails {
     wheelchair: boolean;
@@ -15,27 +15,110 @@ class ActivityDetails {
     }
 }
 
+class ActivityUserGroup {
+    name: string;
+    max_capacity: number;
+    users: string[];
+
+    constructor(name: string, max_capacity: number) {
+        this.name = name;
+        this.max_capacity = max_capacity;
+        this.users = [];
+    }
+
+    addUser(id: string) {
+        if(this.users.length + 1 < this.max_capacity) {
+            this.users.push(id);
+            return true;
+        }
+        
+        return false;
+    }
+
+    addUsers(ids: string[]) {
+        if(this.users.length + ids.length < this.max_capacity) {
+            this.users = this.users.concat(ids);
+            return true;
+        }
+
+        return false;
+    }
+
+    setUsers(ids: string[]) {
+        if(ids.length < this.max_capacity) {
+            this.users = ids;
+            return true;
+        }
+
+        return false;
+    }
+
+    removeUser(id: string) {
+        const index = this.users.indexOf(id);
+        if(index > -1) {
+            this.users.splice(index, 1);
+            return true;
+        }
+
+        return false;
+    }
+}
+
+type ActivityDefaultOptions = {
+    id?: string | null;
+    details?: ActivityDetails;
+    contactIC?: string;
+}
+
 class Activity {
+    id: string | null;
     title: string;
     time: {
         start: Date;
         end: Date;
     };
-    description?: string;
-    location?: string;
-    details?: ActivityDetails;
-
+    location: string;
+    description: string;
+    details: ActivityDetails;
+    contactIC: string | null;
+    volunteers: ActivityUserGroup[];
+    participants: ActivityUserGroup[];
 
     // Title and date/time are the main details that are always
     // present for any activity so we only put them in constructor
-    constructor(title: string, startTime: Date, endTime: Date) {
+    constructor(title: string, 
+                location: string, 
+                startTime: Date, 
+                endTime: Date,
+                description: string,
+                options: ActivityDefaultOptions = {id: null}) {
         this.validateTime(startTime, endTime);
 
         this.title = title;
+        this.location = location;
         this.time = {
             start: startTime,
             end: endTime
         };
+        this.description = description;
+        if(options.id) {
+            this.id = options.id;
+        } else {
+            this.id = null;
+        }
+        if(options.details) {
+            this.details = options.details;
+        } else {
+            this.details = new ActivityDetails();
+        }
+
+        if(options.contactIC) {
+            this.contactIC = options.contactIC;
+        } else {
+            this.contactIC = null;
+        }
+        this.volunteers = [new ActivityUserGroup("1", 10)];
+        this.participants = [new ActivityUserGroup("1", 10)];
     }
 
     setTitle(title: string) {
@@ -83,6 +166,30 @@ class Activity {
         return this;
     }
 
+    addNewVolunteerGroup(group: ActivityUserGroup) {
+        if(this.volunteers.filter(grp => grp.name == group.name)) {
+            throw new Error("Can't have 2 groups with the same name");
+        }
+
+        this.volunteers.push(group);
+    }
+
+    addNewParticipantsGroup(group: ActivityUserGroup) {
+        if(this.participants.filter(grp => grp.name == group.name)) {
+            throw new Error("Can't have 2 groups with the same name");
+        }
+
+        this.participants.push(group);
+    }
+
+    setVolunteerGroups(groups: ActivityUserGroup[]) {
+        this.volunteers = groups;
+    }
+
+    setParticipantsGroups(groups: ActivityUserGroup[]) {
+        this.participants = groups;
+    }
+
     validateTime(start: Date, end: Date) {
         if(!(start instanceof Date) && !(end instanceof Date)) {
             throw new Error("Start or end time is not a date");
@@ -97,9 +204,12 @@ class Activity {
         return {
             title: this.title,
             location: this.location,
-            description: this.description,
             time: this.time,
-            details: this.details
+            description: this.description,
+            details: this.details,
+            contactIC: this.contactIC,
+            volunteers: this.volunteers,
+            participants: this.participants
         }
     }
 }
@@ -110,8 +220,9 @@ class ActivityService {
             throw new Error("Activity object is not of correct type");
         }
         let activities = dbClient.collection("activities");
-        await activities.insertOne(activity.toDBJSON());
+        let res = await activities.insertOne(activity.toDBJSON());
         console.log("Created activity");
+        return res;
     }
 
     async deleteActivity(id: string) {

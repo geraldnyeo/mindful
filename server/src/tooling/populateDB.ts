@@ -15,16 +15,16 @@ async function run() {
     const activities = dbClient.collection("activities");
 
     const userData = [
-        new User("Alice", "alice@ok.com", "staff", "abc"),
-        new User("Bob", "bob@d.com", "volunteer", "def"),
-        new User("Charlie", "charlie@c.com", "participant", "efg"),
-        new User("Dexter", "d@d.com", "staff", "hunter2"),
-        new User("Eve", "eevee@pokemon.net", "staff", "hunter3"),
-        new User("Foxie", "f@f.com", "volunteer", "hunter4"),
-        new User("Garfield", "ihatemondays@garf.com", "volunteer", "hunter5"),
-        new User("Hi", "ok@ok.com", "participant", "ok"),
-        new User("Jonkler", "whysoserious@haha.ha", "staff", "byebye"),
-        new User("Kale", "cabbage@leaf.com", "participant", "ok2")
+        new User("Alice", "alice@ok.com", "staff", {pw: "abc"}),
+        new User("Bob", "bob@d.com", "volunteer", {pw: "def"}),
+        new User("Charlie", "charlie@c.com", "participant", {pw: "efg"}),
+        new User("Dexter", "d@d.com", "staff", {pw: "hunter2"}),
+        new User("Eve", "eevee@pokemon.net", "staff", {pw: "hunter3"}),
+        new User("Foxie", "f@f.com", "volunteer", {pw: "hunter4"}),
+        new User("Garfield", "ihatemondays@garf.com", "volunteer", {pw: "hunter5"}),
+        new User("Hi", "ok@ok.com", "participant", {pw: "ok"}),
+        new User("Jonkler", "whysoserious@haha.ha", "staff", {pw: "byebye"}),
+        new User("Kale", "cabbage@leaf.com", "participant", {pw: "ok2"})
     ];
     
     {
@@ -36,10 +36,18 @@ async function run() {
     }
 
     const activityData = [
-        new Activity("Apple picking", new Date(), new Date(Date.now() + 1000)),
-        new Activity("Banana kicking", new Date(new Date().getTime() + 200), new Date(Date.now() + 1000))
-                .setDescription("Banana epic")
-                .setDetails(new ActivityDetails(true, false, [], "everywhere"))
+        new Activity("Apple picking",
+            "apple place",
+            new Date(),
+            new Date(new Date().getTime() + 1000),
+            "time to pick apples"),
+        new Activity("Banana kicking",
+            ":o",
+            new Date(),
+            new Date(new Date().getTime() + 5000),
+            "wow")
+            .setDescription("Banana epic")
+            .setDetails(new ActivityDetails(true, false, [], "everywhere"))
     ];
 
     {

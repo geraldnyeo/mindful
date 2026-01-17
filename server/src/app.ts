@@ -10,6 +10,7 @@ import type { Request, Response } from 'express';
 import cookieParser from 'cookie-parser';
 import { isLoggedIn, needsJSON } from './lib/middlewares.js';
 import { userAPIMe } from './api_routes/user.js';
+import { eventAPICreate } from './api_routes/event.js';
 
 const app = express();
 
@@ -47,6 +48,8 @@ app.post('/api/auth/login', needsJSON, authAPILogin);
 app.post('/api/auth/refresh', isLoggedIn, authAPIRefresh);
 
 app.get('/api/user/me', isLoggedIn, userAPIMe);
+
+app.post('/api/event/create', isLoggedIn, needsJSON, eventAPICreate);
 
 // Upgrade to HTTPS as we will be handling credentials
 const httpsOptions = {
