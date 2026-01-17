@@ -3,16 +3,15 @@ import "./eventCard.css"
 /**
  * Details required by EventCard only, i.e., public details
  */
-type EventCardDetail = {
-    name: string,
-    date: string,
-    time: string,
+type EventCardFields = {
+    id: string
+    title: string,
     location: string,
-    meeting_point: string
+    startTime: string,
 }
 
 type EventCardProps = {
-    event: EventCardDetail
+    event: EventCardFields
     click_handler: () => void
 }
 
@@ -29,10 +28,9 @@ function EventCard({ event, click_handler }: EventCardProps) {
 
     return (
         <div onClick={handleClick}>
-	    <h3>{event.name}</h3>
+	    <h3>{event.title}</h3>
 	    <p>Location: {event.location}</p>
-	    <p>Time: {event.time}</p>
-	    <p>Meeting Point: {event.meeting_point}</p>
+	    <p>Time: {event.startTime}</p>
         </div>
     )
 }
@@ -40,6 +38,6 @@ function EventCard({ event, click_handler }: EventCardProps) {
 export default EventCard
 
 export type  {
-    EventCardDetail,
+    EventCardFields,
     EventCardProps
 }

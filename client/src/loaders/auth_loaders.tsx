@@ -1,3 +1,6 @@
+import { redirect } from "react-router";
+
+import AuthService from "../services/AuthService"
 import type { userRole } from "../services/UserService"
 
 /**
@@ -5,8 +8,12 @@ import type { userRole } from "../services/UserService"
  * Gets user type for conditional loading
  * @returns {{ userType: userTypes }} The type of user
  */
-function protectedRoute(): { userType: userRole } {
-    return { userType: "admin" }
+function protectedRoute(): { userRole: userRole } {
+    const role = AuthService.getUserRole();
+    if (role === "guest") {
+        redirect("/error/401-unauthorized");
+    }
+    return { userRole: role }
 }
 
 /**

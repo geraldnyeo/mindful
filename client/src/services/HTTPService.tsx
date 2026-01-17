@@ -15,6 +15,10 @@ api.interceptors.response.use(
     if (err.response) {
         if (err.response.status === 401) {
             redirect("/error/401-unauthorized")
+        } else if (err.response.status === 404) {
+            redirect("/error/404-resource-not-found")
+        } else if (err.response.status === 500) {
+            redirect("/error/500-internal-server-error")
         }
     }
 	return Promise.reject(err);

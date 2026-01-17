@@ -10,6 +10,12 @@ interface User {
     joinedDate: string
 }
 
+interface Group {
+    name: string,
+    max_capacity: number,
+    users: User[]
+}
+
 /**
  * User Service
  * Handles loading of event details, etc.
@@ -20,6 +26,7 @@ class UserService {
 export default new UserService()
 
 export type {
+    userRole,
     User,
-    userRole
+    Group,
 }

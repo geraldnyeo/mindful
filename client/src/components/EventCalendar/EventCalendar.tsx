@@ -1,5 +1,5 @@
 import EventCard from "../EventCard/EventCard"
-import type { EventCardProps, EventCardDetail } from "../EventCard/EventCard"
+import type { EventCardProps, EventCardFields } from "../EventCard/EventCard"
 
 import "./eventCalendar.css"
 
@@ -14,16 +14,15 @@ So it is the only thing which needs EventCardProps and EventCardDetails
 */
 
 function EventCalendar() {
-    const test_event: EventCardDetail = {
-	name: "Nature Walk",
-	date: "16/01/2026",
-	time: "1630",
-	location: "Bukit Batok Nature Reserve",
-	meeting_point: "Bukit Batok MRT Station"
+    const test_event: EventCardFields = {
+		id: "qewr1234",
+		title: "Nature Walk",
+		startTime: "16/01/2026 1430",
+		location: "Bukit Batok Nature Reserve",
     }
 
     function test_click_handler() {
-	console.log("Click handler run from Event Card!");
+		console.log("Click handler run from Event Card!");
     }
 
     return (

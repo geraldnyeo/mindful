@@ -8,15 +8,15 @@ import VolunteerDashboard from "../pages/VolunteerDashboard/VolunteerDashboard";
  * Conditionally renders dashboard based on user type
  */
 function DashboardComponent() {
-    const { userType } = useLoaderData();
+    const { userRole} = useLoaderData();
     
     return (
         <>
-            { userType === "admin"
+            { userRole === "admin"
                 ? <AdminDashboard />
-                : userType === "participant"
+                : userRole === "participant"
                 ? <ParticipantDashboard />
-                : userType === "volunteer"
+                : userRole === "volunteer"
                 ? <VolunteerDashboard />
                 : <></>
             }
@@ -24,24 +24,6 @@ function DashboardComponent() {
     )
 }
 
-/**
- * Conditionally fetch and render calendar data based on user type
- */
-function CalendarComponent() {
-    const { userType } = useLoaderData();
-
-    // TODO: fetch data based on user type
-
-    // TODO: conditionally render components based on user type
-    return (
-        <div>
-
-        </div>
-    )
-
-}
-
 export {
     DashboardComponent,
-    CalendarComponent
 }

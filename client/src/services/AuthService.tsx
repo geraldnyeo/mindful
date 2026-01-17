@@ -50,10 +50,16 @@ class AuthService {
     }
 
     /**
-     * Fetches session token
+     * Fetches user role
      */
-    getToken() {
-        // TODO: Retrieve cached token data
+    getUserRole() {
+        const userData = localStorage.getItem('user');
+        if (userData) {
+            const user: User = JSON.parse(userData);
+            return user.role;
+        } else {
+            return "guest"
+        }
     }
 
     // TODO: User data fetching functions
@@ -63,5 +69,5 @@ export default new AuthService()
 
 export type {
     SignupData,
-    LoginData
+    LoginData,
 }
