@@ -1,8 +1,8 @@
 import authService from "../services/authService.js";
 import { userService, User } from "../services/userService.js";
-import type { Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 
-async function signup(req: Request, res: Response) {
+async function signup(req: Request, res: Response, next: NextFunction) {
     if(!authService.validateAPISignupInput(req.body)) {
         res.sendStatus(400); // bad req
         return;
@@ -59,4 +59,53 @@ async function login(req: Request, res: Response) {
     }
 }
 
-export {signup, login};
+async function me(req: Request, res: Response) {
+    const id = await authService.getIdFromToken(req.cookies['session']);
+    
+    try {
+        if(!id) {
+            throw new Error("Session token has no sub?");
+        }
+
+        const userDoc = await userService.getUser(id);
+        if(!userDoc) {
+            throw new Error("Unable to get user details when signing in");
+        }
+        const user = User.fromDBJSON(userDoc);
+
+        res.status(200); // ok
+        res.send(user.toClientJSONBasic());
+        return;
+    } catch(e) {
+        console.error(e);
+        res.sendStatus(500) // ise
+        return;
+    }
+}
+
+async function refresh(req: Request, res: Response) {
+    const id = await authService.getIdFromToken(req.cookies['session']);
+    
+    try {
+        if(!id) {
+            throw new Error("Session token has no sub?");
+        }
+
+        const jwt = await authService.generateSessionToken(id);
+
+        res.cookie('session', jwt, {httpOnly: true});
+        res.status(200); // ok
+        res.send();
+        return;
+    } catch(e) {
+        console.error(e);
+        res.sendStatus(500) // ise
+        return;
+    }
+}
+
+export {signup as authAPISignup, 
+        login as authAPILogin, 
+        me as authAPIMe,
+        refresh as authAPIRefresh
+};

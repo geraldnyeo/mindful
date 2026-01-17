@@ -1,7 +1,7 @@
 import * as bcrypt from 'bcrypt';
 import dbClient from '../lib/dbClient.js';
 import { hasString } from '../util/checkProperty.js';
-import { SignJWT, jwtVerify } from 'jose';
+import { SignJWT, decodeJwt, jwtVerify } from 'jose';
 import { JWTSECRET } from '../util/loadEnv.js';
 import { ObjectId } from 'mongodb';
 
@@ -84,6 +84,10 @@ class AuthService {
         }
     }
     
+    async getIdFromToken(token: string) {
+        return (await decodeJwt(token)).sub;
+    }
+
     // something simple first
     validateAPISignupInput(req_body: any) {
         if(!hasString(req_body, 'name') ||

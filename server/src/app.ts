@@ -5,8 +5,10 @@ import { PORT, CLIENTORIGIN } from './util/loadEnv.js';
 import { User, userService } from './services/userService.js';
 import cors from 'cors';
 import authService from './services/authService.js';
-import { signup, login } from './api_routes/auth.js';
+import { authAPISignup, authAPILogin, authAPIMe, authAPIRefresh } from './api_routes/auth.js';
 import type { Request, Response } from 'express';
+import cookieParser from 'cookie-parser';
+import { isLoggedIn, needsJSON } from './lib/middlewares.js';
 
 const app = express();
 
@@ -19,26 +21,31 @@ const corsOptions = {
 }
 
 app.use(cors(corsOptions));
+app.use(cookieParser());
 
 app.get('/', (req: Request, res: Response) => {
     res.send('Hello World!')
 });
 
-// only allow json requests for api call
-app.use('/api/', (req, res, next) => {
-    if(!req.is('application/json')) {
-        res.sendStatus(415); // unsupported media type
-        return;
-    }
+// // only allow json requests for post api call
+// app.use('/api/', (req, res, next) => {
+//     if(!req.is('application/json')) {
+//         res.sendStatus(415); // unsupported media type
+//         return;
+//     }
 
-    next();
-});
+//     next();
+// });
 
 app.use('/api/', express.json());
 
-app.post('/api/auth/signup', signup);
+app.post('/api/auth/signup', needsJSON, authAPISignup);
 
-app.post('/api/auth/login', login);
+app.post('/api/auth/login', needsJSON, authAPILogin);
+
+app.get('/api/auth/me', isLoggedIn, authAPIMe);
+
+app.post('/api/auth/refresh', isLoggedIn, authAPIRefresh);
 
 // Upgrade to HTTPS as we will be handling credentials
 const httpsOptions = {
