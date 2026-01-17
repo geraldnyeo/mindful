@@ -2,7 +2,7 @@
  * Parse loaded env vars
  */
 
-const { loadEnvFile } = require('node:process');
+import { loadEnvFile } from "node:process";
 
 loadEnvFile(".env");
 
@@ -13,8 +13,7 @@ if(!process.env.PORT) {
     if(typeof(processed) != "number") {
         throw new Error("Port is not a number, got: " + process.env.PORT);
     }
-    process.env.PORT = processed;
-    var PORT = process.env.PORT;
+    var PORT = processed;
 }
 
 if(!process.env.MONGODBSTRING) {
@@ -35,4 +34,4 @@ if(!process.env.JWTSECRET) {
     var JWTSECRET = new TextEncoder().encode(process.env.JWTSECRET);
 }
 
-module.exports = {PORT, MONGODBSTRING, CLIENTORIGIN, JWTSECRET};
+export {PORT, MONGODBSTRING, CLIENTORIGIN, JWTSECRET};

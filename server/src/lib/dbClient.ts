@@ -2,8 +2,8 @@
  * Shared MongoDB client
  */
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
-const { MONGODBSTRING } = require('../util/loadEnv');
+import { MongoClient, ServerApiVersion } from "mongodb";
+import { MONGODBSTRING } from "../util/loadEnv.js";
 
 // console.log(`Found MongoDB connection string: ${MONGODBSTRING.substring(0, 15)}...`);
 // console.log("Creating client...");
@@ -25,4 +25,4 @@ const dbClient = mongoClient.db("dev");
 
 process.on('exit', () => mongoClient.close());
 
-module.exports = {dbClient};
+export default dbClient;

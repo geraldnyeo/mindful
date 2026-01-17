@@ -1,4 +1,4 @@
-function hasString(obj, field) {
+function hasString(obj: any, field: string) {
     if(!obj.hasOwnProperty(field) || typeof(obj[field]) != 'string') {
         return false;
     }
@@ -6,7 +6,7 @@ function hasString(obj, field) {
     return true;
 }
 
-function hasDate(obj, field) {
+function hasDate(obj: any, field: string) {
     if(!obj.hasOwnProperty(field) || !(obj[field] instanceof Date)) {
         return false;
     }
@@ -14,7 +14,4 @@ function hasDate(obj, field) {
     return true;
 }
 
-module.exports = {
-    hasString,
-    hasDate
-}
+export {hasString, hasDate};

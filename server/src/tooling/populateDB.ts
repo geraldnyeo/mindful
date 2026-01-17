@@ -2,9 +2,13 @@
  * Populates the DB with test data
  */
 
-const { dbClient } = require('../lib/dbClient');
-const { Activity, ActivityDetails } = require('../services/eventService');
-const { User } = require('../services/userService');
+// const { dbClient } = require('../lib/dbClient');
+// const { Activity, ActivityDetails } = require('../services/eventService');
+// const { User } = require('../services/userService');
+
+import dbClient from "../lib/dbClient.js";
+import { Activity, ActivityDetails } from "../services/eventService.js";
+import { User } from "../services/userService.js";
 
 async function run() {
     const users = dbClient.collection("users");
@@ -33,7 +37,7 @@ async function run() {
 
     const activityData = [
         new Activity("Apple picking", new Date(), new Date(Date.now() + 1000)),
-        new Activity("Banana kicking", new Date() + 200, new Date(Date.now() + 1000))
+        new Activity("Banana kicking", new Date(new Date().getTime() + 200), new Date(Date.now() + 1000))
                 .setDescription("Banana epic")
                 .setDetails(new ActivityDetails(true, false, [], "everywhere"))
     ];

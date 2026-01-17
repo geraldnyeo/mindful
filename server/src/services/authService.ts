@@ -1,8 +1,21 @@
-const bcrypt = require('bcrypt');
-const { dbClient } = require('../lib/dbClient');
-const { hasString } = require('../util/checkProperty');
-const { SignJWT, jwtVerify } = require('jose');
-const { JWTSECRET } = require('../util/loadEnv');
+import * as bcrypt from 'bcrypt';
+import dbClient from '../lib/dbClient.js';
+import { hasString } from '../util/checkProperty.js';
+import { SignJWT, decodeJwt, jwtVerify } from 'jose';
+import { JWTSECRET } from '../util/loadEnv.js';
+import { ObjectId } from 'mongodb';
+
+type APISignupInput = {
+    name: string,
+    role: string,
+    email: string,
+    pw: string
+}   
+
+type APILoginInput = {
+    email: string,
+    pw: string
+}
 
 class AuthService {
     static BCRYPTMAXPWLENGTH = 72;
@@ -11,7 +24,7 @@ class AuthService {
     static JWTEXPIRYTIME = "15min";
 
     // [TODO] make sync
-    async validateRawPassword(pw) {
+    async validateRawPassword(pw: string) {
         const pwByteBuffer = await new Blob([pw]).bytes();
         if(pwByteBuffer.length > AuthService.BCRYPTMAXPWLENGTH) {
             return false;
@@ -19,7 +32,7 @@ class AuthService {
         return true;
     }
 
-    hashPassword(pw) {
+    hashPassword(pw: string) {
         // const passwordOk = await this.validateRawPassword(pw);
         // if(!passwordOk) {
         //     throw new Error("Invalid password");
@@ -29,11 +42,11 @@ class AuthService {
         return hash;
     }
 
-    async compareHash(pw, hash) {
+    async compareHash(pw: string, hash: string) {
         return await bcrypt.compare(pw, hash);
     }
 
-    async checkPasswordEmail(email, pw) {
+    async checkPasswordEmail(email: string, pw: string) {
         let users = dbClient.collection("users");
         let user = await users.findOne({email: email});
         if(!user) {
@@ -43,9 +56,9 @@ class AuthService {
         return this.compareHash(pw, hash);
     }
 
-    async checkPasswordId(id, pw) {
+    async checkPasswordId(id: string, pw: string) {
         let users = dbClient.collection("users");
-        let user = await users.findOne({_id: id});
+        let user = await users.findOne({_id: new ObjectId(id)});
         if(!user) {
             return false;
         }
@@ -53,7 +66,7 @@ class AuthService {
         return this.compareHash(pw, hash);
     }
 
-    async generateSessionToken(id) {
+    async generateSessionToken(id: string) {
         const jwt = await new SignJWT()
                               .setProtectedHeader({alg: AuthService.JWTALG})
                               .setIssuedAt()
@@ -63,16 +76,20 @@ class AuthService {
         return jwt;
     }
 
-    async checkSessionToken(token) {
+    async checkSessionToken(token: string) {
         try {
             return await jwtVerify(token, JWTSECRET);
         } catch {
             return false;
         }
     }
+    
+    async getIdFromToken(token: string) {
+        return (await decodeJwt(token)).sub;
+    }
 
     // something simple first
-    validateAPISignupInput(req_body) {
+    validateAPISignupInput(req_body: any) {
         if(!hasString(req_body, 'name') ||
            !hasString(req_body, 'role') ||
            !hasString(req_body, 'email') ||
@@ -87,7 +104,7 @@ class AuthService {
         return true;
     }
 
-    validateAPILoginInput(req_body) {
+    validateAPILoginInput(req_body: APILoginInput) {
         if(!hasString(req_body, 'email') ||
            !hasString(req_body, 'pw')) {
             return false;
@@ -103,6 +120,4 @@ class AuthService {
 
 const authService = new AuthService();
 
-module.exports = {
-    authService
-}
+export default authService;

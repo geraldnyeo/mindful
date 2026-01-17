@@ -2,8 +2,8 @@
  * Helper script to nuke DB
  */
 
-const readline = require('node:readline');
-const { dbClient } = require('../lib/dbClient');
+import readline from 'node:readline';
+import dbClient from '../lib/dbClient.js';
 
 const rl = readline.createInterface({
   input: process.stdin,

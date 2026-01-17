@@ -2,7 +2,12 @@ const { ObjectId } = require("mongodb");
 const { dbClient } = require("../lib/dbClient");
 
 class ActivityDetails {
-    constructor(wheelchair = false, payment = false, additional = [], meeting = null) {
+    wheelchair: boolean;
+    payment: boolean;
+    meeting: string | null;
+    additional: Record<string, string>[];
+
+    constructor(wheelchair = false, payment = false, additional: Record<string, string>[] = [], meeting: string | null = null) {
         this.wheelchair = wheelchair;
         this.payment = payment;
         this.additional = additional;
@@ -11,9 +16,19 @@ class ActivityDetails {
 }
 
 class Activity {
+    title: string;
+    time: {
+        start: Date;
+        end: Date;
+    };
+    description?: string;
+    location?: string;
+    details?: ActivityDetails;
+
+
     // Title and date/time are the main details that are always
     // present for any activity so we only put them in constructor
-    constructor(title, startTime, endTime) {
+    constructor(title: string, startTime: Date, endTime: Date) {
         this.validateTime(startTime, endTime);
 
         this.title = title;
@@ -23,7 +38,7 @@ class Activity {
         };
     }
 
-    setTitle(title) {
+    setTitle(title: string) {
         if(typeof(title) != 'string') {
             throw new Error("Title must be a string");
         }
@@ -31,7 +46,7 @@ class Activity {
         this.title = title;
     }
 
-    setDetails(details) {
+    setDetails(details: ActivityDetails) {
         if(!(details instanceof ActivityDetails)) {
             throw new Error("Details for activity must be of correct type");
         }
@@ -40,8 +55,8 @@ class Activity {
         return this;
     }
 
-    setLocation(location) {
-        if(typeof(details) != 'string') {
+    setLocation(location: string) {
+        if(typeof(location) != 'string') {
             throw new Error("Location for activity must be a string");
         }
 
@@ -49,7 +64,7 @@ class Activity {
         return this;
     }
 
-    setTime(start, end) {
+    setTime(start: Date, end: Date) {
         this.validateTime(start, end);
 
         this.time = {
@@ -59,7 +74,7 @@ class Activity {
         return this;
     }
 
-    setDescription(description) {
+    setDescription(description: string) {
         if(typeof(description) != 'string') {
             throw new Error("Activity description must be a string");
         }
@@ -68,7 +83,7 @@ class Activity {
         return this;
     }
 
-    validateTime(start, end) {
+    validateTime(start: Date, end: Date) {
         if(!(start instanceof Date) && !(end instanceof Date)) {
             throw new Error("Start or end time is not a date");
         }
@@ -90,7 +105,7 @@ class Activity {
 }
 
 class ActivityService {
-    async createActivity(activity) {
+    async createActivity(activity: Activity) {
         if(!(activity instanceof Activity)) {
             throw new Error("Activity object is not of correct type");
         }
@@ -99,7 +114,7 @@ class ActivityService {
         console.log("Created activity");
     }
 
-    async deleteActivity(id) {
+    async deleteActivity(id: string) {
         let activities = dbClient.collection("activities");
         let res = await activities.findOneAndDelete({_id: new ObjectId(id)});
         if(!res) {
@@ -111,8 +126,4 @@ class ActivityService {
 
 const activityService = new ActivityService();
 
-module.exports = {
-    ActivityDetails,
-    Activity,
-    activityService
-}
+export {ActivityDetails, Activity, activityService};

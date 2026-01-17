@@ -4,20 +4,31 @@
   "description": "",
   "license": "ISC",
   "author": "",
-  "type": "commonjs",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node app.js",
-    "populate-db": "node tooling/populateDB.js",
-    "nuke-db": "node tooling/nukeDB.js",
-    "nuke-populate-db": "node tooling/nukeDB.js && node tooling/populateDB.js"
+    "dev": "npm run build && npm run start",
+    "populate-db": "npm run build && node dist/tooling/populateDB.js",
+    "nuke-db": "npm run build && node dist/tooling/nukeDB.js",
+    "nuke-populate-db": "npm run build && node dist/tooling/nukeDB.js && node dist/tooling/populateDB.js",
+    "build": "tsc",
+    "start": "node dist/app.js"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "express": "^5.2.1",
     "jose": "^6.1.3",
     "mongodb": "^7.0.0"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/cookie-parser": "^1.4.10",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.0.9",
+    "typescript": "^5.9.3"
   }
 }
