@@ -5,10 +5,11 @@ import { PORT, CLIENTORIGIN } from './util/loadEnv.js';
 import { User, userService } from './services/userService.js';
 import cors from 'cors';
 import authService from './services/authService.js';
-import { authAPISignup, authAPILogin, authAPIMe, authAPIRefresh } from './api_routes/auth.js';
+import { authAPISignup, authAPILogin, authAPIRefresh } from './api_routes/auth.js';
 import type { Request, Response } from 'express';
 import cookieParser from 'cookie-parser';
 import { isLoggedIn, needsJSON } from './lib/middlewares.js';
+import { userAPIMe } from './api_routes/user.js';
 
 const app = express();
 
@@ -43,9 +44,9 @@ app.post('/api/auth/signup', needsJSON, authAPISignup);
 
 app.post('/api/auth/login', needsJSON, authAPILogin);
 
-app.get('/api/auth/me', isLoggedIn, authAPIMe);
-
 app.post('/api/auth/refresh', isLoggedIn, authAPIRefresh);
+
+app.get('/api/user/me', isLoggedIn, userAPIMe);
 
 // Upgrade to HTTPS as we will be handling credentials
 const httpsOptions = {
