@@ -1,7 +1,8 @@
-const { authService } = require("../services/authService");
-const { userService, User } = require("../services/userService");
+import authService from "../services/authService.js";
+import { userService, User } from "../services/userService.js";
+import type { Request, Response } from "express";
 
-async function signup(req, res) {
+async function signup(req: Request, res: Response) {
     if(!authService.validateAPISignupInput(req.body)) {
         res.sendStatus(400); // bad req
         return;
@@ -13,6 +14,9 @@ async function signup(req, res) {
         const createdUserDoc = await userService.createUser(user);
         const jwt = authService.generateSessionToken(createdUserDoc.insertedId.toString());
         const userDoc = await userService.getUser(createdUserDoc.insertedId.toString());
+        if(!userDoc) {
+            throw new Error("Failed to get created user details");
+        }
         user = User.fromDBJSON(userDoc);
         res.cookie('session', jwt, {httpOnly: true});
         res.status(200); // ok
@@ -25,7 +29,7 @@ async function signup(req, res) {
     }
 }
 
-async function login(req, res) {
+async function login(req: Request, res: Response) {
     if(!authService.validateAPILoginInput(req.body)) {
         res.sendStatus(400); // bad req
         return;
@@ -39,6 +43,9 @@ async function login(req, res) {
             return;
         }
         const userDoc = await userService.getUserByEmail(email);
+        if(!userDoc) {
+            throw new Error("Unable to get user details when signing in");
+        }
         const jwt = await authService.generateSessionToken(userDoc._id.toString());
         const user = User.fromDBJSON(userDoc);
         res.cookie('session', jwt, {httpOnly: true});
@@ -52,7 +59,4 @@ async function login(req, res) {
     }
 }
 
-module.exports = {
-    signup,
-    login
-}
+export {signup, login};

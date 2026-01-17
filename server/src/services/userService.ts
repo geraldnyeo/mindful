@@ -1,37 +1,32 @@
-const { ObjectId } = require("mongodb");
-const { dbClient } = require("../lib/dbClient");
-const { authService } = require("./authService");
-const { hasString, hasDate } = require("../util/checkProperty");
+import { ObjectId, type Document, type WithId } from "mongodb";
+import dbClient from "../lib/dbClient.js";
+import authService from "./authService.js";
+import { hasString, hasDate } from "../util/checkProperty.js";
 
-/**
- * Helper class for validation of user role
- */
-class UserRole {
-    static validate(role) {
-        switch(role) {
-            case "guest":
-            case "participant":
-            case "volunteer":
-            case "staff":
-                return true;
-            default:
-                return false;
-        }
-    }
-}
+type UserRole = "guest" |
+                "participant" |
+                "volunteer" |
+                "staff";
 
 const userOptionsDefault = {
     pw: null,
     pwHashed: false,
     joinedDate: null,
     id: null
-}
+} as any;
 
 /**
  * User of the website
  */
 class User {
-    static fromDBJSON(document) {
+    name: string;
+    email: string;
+    id: string | null;
+    role: UserRole;
+    joinedDate: Date;
+    pw?: string;
+
+    static fromDBJSON(document: WithId<Document>) {
         if(!hasString(document, "name") ||
            !hasString(document, "email") ||
            !hasString(document, "role") ||
@@ -49,7 +44,7 @@ class User {
                         });
     }
 
-    constructor(name, email, role, options = userOptionsDefault) {
+    constructor(name: string, email: string, role: UserRole, options = userOptionsDefault) {
         options = {...userOptionsDefault, ...options};
         this.name = name;
         this.email = email;
@@ -57,7 +52,7 @@ class User {
         if(!options.pwHashed && options.pw !== null) {
             this.pw = authService.hashPassword(options.pw);
         }
-        UserRole.validate(role);
+        // UserRole.validate(role);
         this.role = role;
         if(options.joinedDate) {
             this.joinedDate = options.joinedDate;
@@ -76,12 +71,12 @@ class User {
             email: this.email,
             role: this.role,
             joinedDate: this.joinedDate
-        }
+        } as Record<string, any>;
         if(this.pw != null) {
             out["pw"] = this.pw;
         }
         if(this.id != null) {
-            out["_id"] = ObjectId(this.id);
+            out["_id"] = new ObjectId(this.id);
         }
         return out;
     }
@@ -107,7 +102,7 @@ class UserService {
      * Creates a user in the DB
      * @param {User} user 
      */
-    async createUser(user) {
+    async createUser(user: User) {
         if(!(user instanceof User)) {
             throw new Error("User object is not of correct type");
         }
@@ -121,7 +116,7 @@ class UserService {
      * Deletes a user from DB given their _id
      * @param {string} id 
      */
-    async deleteUser(id) {
+    async deleteUser(id: string) {
         let users = dbClient.collection("users");
         let res = await users.findOneAndDelete({_id: new ObjectId(id)});
         if(!res) {
@@ -130,13 +125,13 @@ class UserService {
         console.log("Deleted user");
     }
 
-    async getUser(id) {
+    async getUser(id: string) {
         let users = dbClient.collection("users");
         let res = await users.findOne({_id: new ObjectId(id)});
         return res;
     }
 
-    async getUserByEmail(email) {
+    async getUserByEmail(email: string) {
         let users = dbClient.collection("users");
         let res = await users.findOne({email: email});
         return res;
@@ -146,8 +141,4 @@ class UserService {
 // instantiate each UserService individually or share globally?
 const userService = new UserService();
 
-module.exports = {
-    UserRole,
-    User,
-    userService
-}
+export {type UserRole, User, userService};
