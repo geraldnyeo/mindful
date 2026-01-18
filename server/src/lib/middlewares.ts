@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import authService from "../services/authService.js";
+import { userService } from "../services/userService.js";
 
 async function isLoggedIn(req: Request, res: Response, next: NextFunction) {
     if(!req.cookies['session']) {
@@ -25,7 +26,29 @@ async function needsJSON(req: Request, res: Response, next: NextFunction) {
     next();
 }
 
+async function isAdmin(req: Request, res: Response, next: NextFunction) {
+    if(!req.cookies['session']) {
+        res.sendStatus(400); // bad req
+    }
+
+    try {
+        let jwt = await authService.checkSessionToken(req.cookies['session']);
+        if(!jwt || !jwt.payload.sub) {
+            throw new Error("unauth");
+        }
+
+        let userDoc = await userService.getUser(jwt.payload.sub);
+        if(!userDoc || userDoc.role || userDoc.role !== "admin") {
+            throw new Error("unauth");
+        }
+    } catch(e) {
+        res.sendStatus(401); // unauth
+        return;
+    }
+}
+
 export {
     isLoggedIn,
-    needsJSON
+    needsJSON,
+    isAdmin
 }

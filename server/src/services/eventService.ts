@@ -1,4 +1,4 @@
-import { ObjectId } from "mongodb";
+import { ObjectId, type Document, type WithId } from "mongodb";
 import dbClient from "../lib/dbClient.js";
 
 class ActivityDetails {
@@ -68,6 +68,8 @@ type ActivityDefaultOptions = {
     id?: string | null;
     details?: ActivityDetails;
     contactIC?: string;
+    volunteerGroups?: ActivityUserGroup[];
+    participantGroups?: ActivityUserGroup[];
 }
 
 class Activity {
@@ -83,6 +85,37 @@ class Activity {
     contactIC: string | null;
     volunteers: ActivityUserGroup[];
     participants: ActivityUserGroup[];
+
+    static fromDBJSON(document: WithId<Document>) {
+        let newActivity = new Activity(document.title,
+                                       document.location,
+                                       document.time.start,
+                                       document.time.end,
+                                       document.description,
+                                       {id: document._id.toString(),
+                                        contactIC: document.contactIC,
+                                        details: new ActivityDetails(document.details.wheelchair,
+                                                                     document.details.payment,
+                                                                     document.details.additional,
+                                                                     document.details.meeting),     
+                                        volunteerGroups: [],
+                                        participantGroups: []                                                          
+                                       });
+        console.log(newActivity);
+        for(const volunteerGroup of document.volunteers) {
+            let toAdd = new ActivityUserGroup(volunteerGroup.name, volunteerGroup.max_capacity);
+            toAdd.addUsers(volunteerGroup.users);
+            newActivity.addNewVolunteerGroup(toAdd);
+        }
+
+        for(const participantGroup of document.participants) {
+            let toAdd = new ActivityUserGroup(participantGroup.name, participantGroup.max_capacity);
+            toAdd.addUsers(participantGroup.users);
+            newActivity.addNewParticipantsGroup(toAdd);
+        }
+                                       
+        return newActivity;
+    }
 
     // Title and date/time are the main details that are always
     // present for any activity so we only put them in constructor
@@ -117,8 +150,18 @@ class Activity {
         } else {
             this.contactIC = null;
         }
-        this.volunteers = [new ActivityUserGroup("1", 10)];
-        this.participants = [new ActivityUserGroup("1", 10)];
+
+        if(options.volunteerGroups) {
+            this.volunteers = options.volunteerGroups;
+        } else {
+            this.volunteers = [new ActivityUserGroup("1", 10)];
+        }
+        
+        if(options.participantGroups) {
+            this.participants = options.participantGroups;
+        } else {
+            this.participants = [new ActivityUserGroup("1", 10)];
+        }
     }
 
     setTitle(title: string) {
@@ -167,7 +210,8 @@ class Activity {
     }
 
     addNewVolunteerGroup(group: ActivityUserGroup) {
-        if(this.volunteers.filter(grp => grp.name == group.name)) {
+        if(this.volunteers.filter(grp => grp.name == group.name).length != 0) {
+            console.log(this.volunteers.filter(grp => grp.name == group.name));
             throw new Error("Can't have 2 groups with the same name");
         }
 
@@ -175,7 +219,7 @@ class Activity {
     }
 
     addNewParticipantsGroup(group: ActivityUserGroup) {
-        if(this.participants.filter(grp => grp.name == group.name)) {
+        if(this.participants.filter(grp => grp.name == group.name).length != 0) {
             throw new Error("Can't have 2 groups with the same name");
         }
 
@@ -212,6 +256,21 @@ class Activity {
             participants: this.participants
         }
     }
+
+    toClientJSONFull() {
+        return {
+            id: this.id,
+            title: this.title,
+            location: this.location,
+            startTime: this.time.start,
+            endTime: this.time.end,
+            description: this.description,
+            details: this.details,
+            contactIC: this.contactIC,
+            volunteers: this.volunteers,
+            participants: this.participants
+        }
+    }
 }
 
 class ActivityService {
@@ -232,6 +291,15 @@ class ActivityService {
             throw new Error("Failed to delete activity or activity does not exist");
         }
         console.log("Deleted activity");
+    }
+
+    async getActivity(id: string) {
+        let activities = dbClient.collection("activities");
+        let res = await activities.findOne({_id: new ObjectId(id)});
+        if(!res) {
+            throw new Error("Failed to get activity or activity does not exist");
+        }
+        return Activity.fromDBJSON(res);
     }
 }
 
