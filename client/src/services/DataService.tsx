@@ -1,17 +1,18 @@
 import api from "./HTTPService"
 
-import type { User } from "./UserService"
+import type { User, Group } from "./UserService"
 
 interface Event {
     id: string,
     title: string,
+    description: string,
     location: string,
     startTime: string,
     endTime: string,
     details: string,
     contactIC: User,
-    volunteers: User[],
-    participants: User[]
+    volunteers: Group[],
+    participants: Group[]
 }
 
 /**
@@ -32,9 +33,7 @@ class DataService {
      * @param eventid id of the event to get
      */
     getEventById(eventid: number): Event {
-        api.get("/api/event/details", {
-            params: { eventid }
-        })
+        api.get(`/api/event/details/${eventid}`)
         .then(res => {
             console.log(res);
             // TODO: Parse into Event
@@ -48,6 +47,7 @@ class DataService {
         return {
             id: "abc123",
             title: "Nature Walk",
+            description: "desc",
             location: "Park E",
             startTime: "1430",
             endTime: "1630",
@@ -59,8 +59,28 @@ class DataService {
                 role: "admin",
                 joinedDate: "14/12/2000"
             },
-            volunteers: [],
-            participants: []
+            volunteers: [{
+                name: "Group 1",
+                max_capacity: 10,
+                users: [{
+                    id: "defghijkl",
+                    name: "Ben",
+                    email: "b@c.com",
+                    role: "volunteer",
+                    joinedDate: "07/03/2024"
+                }]
+            }],
+            participants: [{
+                name: "Group 1",
+                max_capacity: 5,
+                users: [{
+                    id: "uinlfsdfs",
+                    name: "Carla",
+                    email: "c@d.com",
+                    role: "participant",
+                    joinedDate: "15/07/2022"
+                }]
+            }]
         }
     }
 

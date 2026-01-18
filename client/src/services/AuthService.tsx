@@ -1,3 +1,5 @@
+import { redirect } from "react-router"
+
 import api from "./HTTPService"
 import type { User, userRole } from "./UserService"
 
@@ -62,7 +64,19 @@ class AuthService {
         }
     }
 
-    // TODO: User data fetching functions
+    /**
+     * Fetches user data (all)
+     */
+    getUser() {
+        const userData = localStorage.getItem("user");
+        if (userData) {
+            const user: User = JSON.parse(userData);
+            return user;
+        } else {
+            return null
+        }
+    }
+
 }
 
 export default new AuthService()

@@ -2,6 +2,7 @@ import { useState } from "react"
 
 import "./eventVolunteers.css"
 
+import AuthService from "../../services/AuthService"
 import type { userRole, Group } from "../../services/UserService"
 import type { EventSaveStatus } from "../../pages/EventPage/EventPage"
 
@@ -16,16 +17,26 @@ function EventVolunteers({ volunteers, role, saveCallback }: EventVolunteersProp
 
     async function handleAddVolunteerGroup(e: React.MouseEvent<HTMLButtonElement>) {
         e.preventDefault();
-        // TODO
+        // TODO: Something to name the group, maybe a modal? idk
     }
 
     async function handleJoinGroup(e: React.MouseEvent<HTMLButtonElement>) {
         e.preventDefault();
-        // TODO
+        const user = AuthService.getUser();
+        if (!user) {
+            throw new Error("User is null!")
+        }
+        
+        const updatedVolunteers = structuredClone(volunteers);
+        updatedVolunteers[selected].users.push(user);
+
+        saveCallback({ volunteers: updatedVolunteers });
+        // TODO: Refresh page
     }
     
     return (
         <div>
+            <h2>Volunteers</h2>
             <div className="eventVolunteersHeader">
                 {volunteers.map((group, index) => (
                     <button onClick={(_: React.MouseEvent<HTMLButtonElement>) => setSelected(index)}>{group.name}</button>
@@ -34,19 +45,17 @@ function EventVolunteers({ volunteers, role, saveCallback }: EventVolunteersProp
                     <button onClick={handleAddVolunteerGroup}>+</button>
                 }
             </div>
-            <div className="eventVolunteersGroups">
-                <div>
-                    <h3>{volunteers[selected].name}</h3>
-                    <p>{volunteers[selected].max_capacity}</p>
-                    <ul>
-                        {volunteers[selected].users.map(user => (
-                            <li>{user.name}</li>
-                        ))}
-                    </ul>
-                    {role === "volunteer" &&
-                        <button onClick={handleJoinGroup}>Join Group</button>
-                    }
-                </div>
+            <div className="eventVolunteersGroup">
+                <h3>{volunteers[selected].name}</h3>
+                <p>Max: {volunteers[selected].max_capacity}</p>
+                <ul>
+                    {volunteers[selected].users.map(user => (
+                        <li>{user.name}</li>
+                    ))}
+                </ul>
+                {role === "volunteer" &&
+                    <button onClick={handleJoinGroup}>Join Group</button>
+                }
             </div>
         </div>
     )

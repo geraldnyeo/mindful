@@ -7,6 +7,7 @@ import type { EventSaveStatus } from "../../pages/EventPage/EventPage"
 type EventDetailsFields = {
     id: string,
     title: string,
+    description: string,
     location: string,
     startTime: string,
     endTime: string,
@@ -53,6 +54,15 @@ function EventDetails({ event, editable, saveCallback }: EventDetailsProps) {
         })
     }
 
+    function handleChangeDescription(e: React.ChangeEvent<HTMLTextAreaElement>) {
+        e.preventDefault();
+        // TODO: Input filtering
+        setEventDetails({
+            ...eventDetails,
+            description: e.target.value
+        })
+    }
+
     function handleChangeLocation(e: React.ChangeEvent<HTMLInputElement>) {
         e.preventDefault();
         // TODO: Input filtering
@@ -85,7 +95,6 @@ function EventDetails({ event, editable, saveCallback }: EventDetailsProps) {
     function handleChangeDetails(e: React.ChangeEvent<HTMLTextAreaElement>) {
         e.preventDefault();
         // TODO: Input filtering
-        // TODO: Date parsing
         setEventDetails({
             ...eventDetails,
             details: e.target.value
@@ -93,11 +102,12 @@ function EventDetails({ event, editable, saveCallback }: EventDetailsProps) {
     }
 
     return (
-        <>
+        <div>
             {editable && editing ?
-                <div>
+                <>
                     <form onSubmit={(handleSubmit)}>
                         <input type="text" name="title" value={eventDetails.title} onChange={handleChangeTitle} />
+                        <textarea name="description" value={eventDetails.description} onChange={handleChangeDescription} />
                         <input type="text" name="location" value={eventDetails.location} onChange={handleChangeLocation} />
                         <input type="text" name="startTime" value={eventDetails.startTime} onChange={handleChangeStartTime} />
                         <input type="text" name="endTime" value={eventDetails.endTime} onChange={handleChangeEndTime} />
@@ -105,20 +115,21 @@ function EventDetails({ event, editable, saveCallback }: EventDetailsProps) {
                         <button onClick={handleClickCancel}>Cancel</button>
                         <button type="submit">Save</button>
                     </form>
-                </div>
+                </>
             :
-                <div>
+                <>
                     <h1>{event.title}</h1>
                     {editable && !editing &&
                         <button onClick={handleClickEdit}>Edit</button>
                     }
 
+                    <p>{event.description}</p>
                     <p>Location: {event.location}</p>
                     <p>Time: {event.startTime} - {event.endTime}</p>
                     <p>{event.details}</p>
-                </div>
+                </>
             }
-        </>
+        </div>
     )
 }
 
