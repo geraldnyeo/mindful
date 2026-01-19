@@ -8,9 +8,9 @@ import authService from './services/authService.js';
 import { authAPISignup, authAPILogin, authAPIRefresh } from './api_routes/auth.js';
 import type { Request, Response } from 'express';
 import cookieParser from 'cookie-parser';
-import { isLoggedIn, needsJSON } from './lib/middlewares.js';
+import { isAdmin, isLoggedIn, needsJSON } from './lib/middlewares.js';
 import { userAPIMe } from './api_routes/user.js';
-import { eventAPICreate } from './api_routes/event.js';
+import { eventAPICreate, eventAPIDetails } from './api_routes/event.js';
 
 const app = express();
 
@@ -49,7 +49,9 @@ app.post('/api/auth/refresh', isLoggedIn, authAPIRefresh);
 
 app.get('/api/user/me', isLoggedIn, userAPIMe);
 
-app.post('/api/event/create', isLoggedIn, needsJSON, eventAPICreate);
+app.post('/api/event/create', isLoggedIn, isAdmin, needsJSON, eventAPICreate);
+
+app.get('/api/event/details/:id', isLoggedIn, eventAPIDetails);
 
 // Upgrade to HTTPS as we will be handling credentials
 const httpsOptions = {
