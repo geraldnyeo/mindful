@@ -145,7 +145,7 @@ class UserService {
         let docs = await res.toArray();
         // console.log(res);
         let userObjs = docs.map(item => User.fromDBJSON(item));
-        console.log(users);
+        // console.log(users);
         let out: Record<string, User> = {};
         for(const user of userObjs) {
             if(user.id) out[user.id] = user;

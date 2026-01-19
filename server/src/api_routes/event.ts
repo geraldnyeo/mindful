@@ -112,7 +112,7 @@ async function update(req: Request, res: Response, next: NextFunction) {
                                   }
     );
 
-    console.log(activity);
+    // console.log(activity);
 
     try {
         await activityService.setActivity(parsedInputData.id, activity);

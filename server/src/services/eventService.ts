@@ -102,7 +102,7 @@ class Activity {
                                         volunteerGroups: [],
                                         participantGroups: []                                                          
                                        });
-        console.log(newActivity);
+        // console.log(newActivity);
         for(const volunteerGroup of document.volunteers) {
             let toAdd = new ActivityUserGroup(volunteerGroup.name, volunteerGroup.max_capacity);
             toAdd.addUsers(volunteerGroup.users);
