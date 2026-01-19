@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
+import { useNavigate } from "react-router"
 
 import "./eventView.css"
 
@@ -13,10 +14,20 @@ type EventViewProps = {
 }
 
 function EventView({ role, event }: EventViewProps) {
+    const navigate = useNavigate();
+
+    const user = AuthService.getUser();
+
     const [eventData, setEventData] = useState<Event>(event);
     const [editing, setEditing] = useState<boolean>(false);
     const [selectedVolunteerGroup, setSelectedVolunteerGroup] = useState<number>(0);
     const [selectedParticipantGroup, setSelectedParticipantGroup] = useState<number>(0);
+
+    const formatDatetimeLocal = (dateObject: Date) => {
+        const offset = dateObject.getTimezoneOffset() * 60000; // Offset in milliseconds
+        const localDate = new Date(dateObject.getTime() - offset);
+        return localDate.toISOString().slice(0, 16); 
+    };
 
     function handleClickEdit(e: React.MouseEvent<HTMLButtonElement>) {
         e.preventDefault();
@@ -33,7 +44,8 @@ function EventView({ role, event }: EventViewProps) {
     async function handleClickSave(e: React.MouseEvent<HTMLButtonElement>) {
         e.preventDefault();
         await DataService.putEvent(eventData);
-        // TODO: Refresh page
+        setEditing(false);
+        navigate(0);
     }
 
     function handleChangeTitle(e: React.ChangeEvent<HTMLInputElement>) {
@@ -67,15 +79,9 @@ function EventView({ role, event }: EventViewProps) {
         e.preventDefault();
         // TODO: Input filtering
         // TODO: Actual date parsing
-        const today = new Date();
-        const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0');
-        const day = String(today.getDate()).padStart(2, '0');
-        const todayDateString = `${year}-${month}-${day}`;
-        const dateTimeString = `${todayDateString}T${e.target.value}`;
         setEventData({
             ...eventData,
-            startTime: new Date(dateTimeString)
+            startTime: new Date(e.target.value)
         })
     }
 
@@ -83,15 +89,9 @@ function EventView({ role, event }: EventViewProps) {
         e.preventDefault();
         // TODO: Input filtering
         // TODO: Actual date parsing
-        const today = new Date();
-        const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0');
-        const day = String(today.getDate()).padStart(2, '0');
-        const todayDateString = `${year}-${month}-${day}`;
-        const dateTimeString = `${todayDateString}T${e.target.value}`;
         setEventData({
             ...eventData,
-            endTime: new Date(dateTimeString)
+            endTime: new Date(e.target.value)
         })
     }
 
@@ -140,9 +140,18 @@ function EventView({ role, event }: EventViewProps) {
         })
     }
 
+    function checkVolunteerInGroup() {
+        console.log(eventData.volunteers[selectedVolunteerGroup].users.filter(u => u.id === user?.id));
+        return eventData.volunteers[selectedVolunteerGroup].users.filter(u => u.id === user?.id).length > 0;
+    }
+
     async function handleAddVolunteerGroup(e: React.MouseEvent<HTMLButtonElement>) {
         e.preventDefault();
         // TODO: Something to name the group, maybe a modal? idk
+    }
+
+    function checkParticipantInGroup() {
+        return eventData.participants[selectedParticipantGroup].users.filter(u => u.id === user?.id).length > 0;
     }
 
     async function handleAddParticipantGroup(e: React.MouseEvent<HTMLButtonElement>) {
@@ -160,7 +169,20 @@ function EventView({ role, event }: EventViewProps) {
         // TODO: Try catch
         await DataService.register(role, event.id, event.volunteers[selectedVolunteerGroup].name);
         
-        // TODO: Refresh page
+        navigate(0);
+    }
+
+    async function handleLeaveGroup(e: React.MouseEvent<HTMLButtonElement>) {
+        e.preventDefault();
+        const user = AuthService.getUser();
+        if (!user) {
+            throw new Error("User is null!")
+        }
+        
+        // TODO: Try catch
+        await DataService.cancel(role, event.id, event.volunteers[selectedVolunteerGroup].name);
+        
+        navigate(0);
     }
 
     return (
@@ -171,8 +193,8 @@ function EventView({ role, event }: EventViewProps) {
                     <input type="text" name="title" value={eventData.title} onChange={handleChangeTitle} />
                     <textarea name="description" value={eventData.description} onChange={handleChangeDescription} />
                     <input type="text" name="location" value={eventData.location} onChange={handleChangeLocation} />
-                    <input type="time" name="startTime" value={eventData.startTime.toLocaleTimeString()} onChange={handleChangeStartTime} />
-                    <input type="time" name="endTime" value={eventData.endTime.toLocaleTimeString()} onChange={handleChangeEndTime} />
+                    <input type="datetime-local" name="startTime" value={formatDatetimeLocal(eventData.startTime)} onChange={handleChangeStartTime} />
+                    <input type="datetime-local" name="endTime" value={formatDatetimeLocal(eventData.endTime)} onChange={handleChangeEndTime} />
                     <input type="checkbox" name="wheelchair" checked={eventData.details.wheelchair} onChange={handleChangeDetailsWheelchair} />
                     <input type="checkbox" name="payment" checked={eventData.details.payment} onChange={handleChangeDetailsPayment} />
                     <input type="text" name="meeting" value={eventData.details.meeting ?? ""} onChange={handleChangeDetailsMeeting} />
@@ -229,8 +251,11 @@ function EventView({ role, event }: EventViewProps) {
                                 <li>{user.name}</li>
                             ))}
                         </ul>
-                        {role === "volunteer" &&
+                        {role === "volunteer" && !checkVolunteerInGroup() &&
                             <button onClick={handleJoinGroup}>Join Group</button>
+                        }
+                        {role === "volunteer" && checkVolunteerInGroup() &&
+                            <button onClick={handleLeaveGroup}>Leave Group</button>
                         }
                     </div>
                 </div>
@@ -258,8 +283,11 @@ function EventView({ role, event }: EventViewProps) {
                                 ))}
                             </ul>
                         }
-                        {role === "participant" &&
+                        {role === "participant" && !checkParticipantInGroup() &&
                             <button onClick={handleJoinGroup}>Join Group</button>
+                        }
+                        {role === "participant" && checkParticipantInGroup() &&
+                            <button onClick={handleLeaveGroup}>Leave Group</button>
                         }
                     </div>
                 </div>

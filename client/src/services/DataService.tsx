@@ -154,6 +154,24 @@ class DataService {
 			// TODO;
 		})
 	}
+
+    /**
+	 * Cancel a volunteer for an event
+	 */
+	cancel(userRole: userRole, eventid: string, group: string) {
+		api.post(`/api/event/cancel/${userRole}`, {
+			event: eventid,
+			group
+		})
+		.then(res => {
+			console.log(res);
+			// TODO
+		})
+		.catch(err => {
+			console.log(err);
+			// TODO;
+		})
+	}
 }
 
 export default new DataService()
