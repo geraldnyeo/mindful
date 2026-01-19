@@ -3,16 +3,18 @@ import type { LoaderFunctionArgs } from "react-router"
 
 import AuthService from "../services/AuthService"
 import DataService from "../services/DataService"
-import type { Event, EventShort } from "../services/DataService"
+import type { Event } from "../services/DataService"
 import type { userRole } from "../services/UserService"
 
 /**
  * Redirect to /dashboard if the user is logged in
  * @returns {{ userType: userTypes }} The type of user
  */
-function indexLoader(): { userRole: userRole } {
+function indexLoader() {
     const role = AuthService.getUserRole();
-    return { userRole: role }
+    if (!(role === "guest")) {
+        return redirect("/dashboard")
+    }
 }
 
 /**
@@ -28,11 +30,7 @@ function dashboardLoader(): { userRole: userRole } {
  * Loader for /calendar
  * @returns events //todo
  */
-function calendarLoader({ params }: LoaderFunctionArgs): {
-    userRole: userRole,
-    events: Event[],
-    firstDay: Date,
-} | void {
+async function calendarLoader({ params }: LoaderFunctionArgs) {
     const userRole = AuthService.getUserRole();
     const { monthyear } = params; // MM-YYYY
     if (!monthyear) { 
@@ -47,7 +45,7 @@ function calendarLoader({ params }: LoaderFunctionArgs): {
         const startDate = new Date(year, month - 1, 1);
         const endDate = new Date(year, month, 0);
 
-        const events: Event[] = DataService.getEventsByMonthAdmin(
+        const events: Event[] = await DataService.getEventsByMonthAdmin(
             startDate.toLocaleDateString("en-GB"), 
             endDate.toLocaleDateString("en-GB")
         );
@@ -58,8 +56,7 @@ function calendarLoader({ params }: LoaderFunctionArgs): {
             firstDay: startDate,
         }
     } catch (error) {
-        redirect("/error/404-resource-not-found")
-        return;
+        return redirect("/error/404-resource-not-found")
     }
 }
 
@@ -67,23 +64,15 @@ function calendarLoader({ params }: LoaderFunctionArgs): {
  * Loader for /event/eventid
  * @returns events //todo
  */ 
-function eventLoader({ params }: LoaderFunctionArgs): {
-    userRole: userRole,
-    event: Event
-} | void {
+async function eventLoader({ params }: LoaderFunctionArgs){
     const userRole = AuthService.getUserRole();
 
     const { eventid } = params;
     if (!eventid) {
-        redirect("/error/404-resource-not-found")
-        return;
+        return redirect("/error/404-resource-not-found");
     }
-    const eventidInt = parseInt(eventid);
-    if (isNaN(eventidInt)) {
-        redirect("/error/404-resource-not-found")
-        return;
-    }
-    const event: Event = DataService.getEventById(eventidInt);
+
+    const event: Event = await DataService.getEventById(eventid);
     
     return {
         userRole,

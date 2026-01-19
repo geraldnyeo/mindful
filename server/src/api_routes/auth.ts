@@ -18,7 +18,7 @@ async function signup(req: Request, res: Response, next: NextFunction) {
             throw new Error("Failed to get created user details");
         }
         user = User.fromDBJSON(userDoc);
-        res.cookie('session', jwt, {httpOnly: true});
+        res.cookie('session', jwt, {httpOnly: true, sameSite: 'none', secure: true});
         res.status(200); // ok
         res.send(user.toClientJSONBasic());
         return;
@@ -48,7 +48,7 @@ async function login(req: Request, res: Response) {
         }
         const jwt = await authService.generateSessionToken(userDoc._id.toString());
         const user = User.fromDBJSON(userDoc);
-        res.cookie('session', jwt, {httpOnly: true});
+        res.cookie('session', jwt, {httpOnly: true, sameSite: 'none', secure: true});
         res.status(200); // ok
         res.send(user.toClientJSONBasic());
         return;
@@ -69,7 +69,7 @@ async function refresh(req: Request, res: Response) {
 
         const jwt = await authService.generateSessionToken(id);
 
-        res.cookie('session', jwt, {httpOnly: true});
+        res.cookie('session', jwt, {httpOnly: true, sameSite: 'none', secure: true});
         res.status(200); // ok
         res.send();
         return;

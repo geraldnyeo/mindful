@@ -18,7 +18,7 @@ interface Group {
 
 /**
  * User Service
- * Handles loading of event details, etc.
+ * Handles loading of user details, etc.
  */
 class UserService {
 }

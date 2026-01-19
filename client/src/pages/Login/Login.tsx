@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useNavigate } from "react-router"
 
 import "./login.css"
 
@@ -8,6 +9,8 @@ import type { LoginData } from "../../services/AuthService"
 import { filter_input_special, filter_input_email } from "../../helpers/text_methods"
 
 function Login() {
+	const navigate = useNavigate();
+
     const [loginData, setLoginData] = useState<LoginData>({
 		email: "",
 		pw: ""
@@ -24,6 +27,7 @@ function Login() {
 			email: "",
 			pw: "",
 		});
+		navigate("/")
     }
 
     async function handleChangeEmail(e: React.ChangeEvent<HTMLInputElement>) {

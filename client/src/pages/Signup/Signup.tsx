@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useNavigate } from "react-router"
 
 import "./signup.css"
 
@@ -9,6 +10,8 @@ import type { userRole } from "../../services/UserService"
 import { filter_input_special, filter_input_email } from "../../helpers/text_methods"
 
 function Signup() {
+	const navigate = useNavigate();
+
     const [signupData, setSignupData] = useState<SignupData>({
 		email: "",
 		name: "",
@@ -29,6 +32,7 @@ function Signup() {
 			pw: "",
 			role: "guest"
 		});
+		navigate("/")
     }
 
     async function handleChangeEmail(e: React.ChangeEvent<HTMLInputElement>) {

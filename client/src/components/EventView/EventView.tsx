@@ -67,29 +67,76 @@ function EventView({ role, event }: EventViewProps) {
         e.preventDefault();
         // TODO: Input filtering
         // TODO: Actual date parsing
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        const todayDateString = `${year}-${month}-${day}`;
+        const dateTimeString = `${todayDateString}T${e.target.value}`;
         setEventData({
             ...eventData,
-            startTime: new Date(e.target.value)
+            startTime: new Date(dateTimeString)
         })
     }
 
     function handleChangeEndTime(e: React.ChangeEvent<HTMLInputElement>) {
         e.preventDefault();
-        console.log(e.target.value);
         // TODO: Input filtering
         // TODO: Actual date parsing
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        const todayDateString = `${year}-${month}-${day}`;
+        const dateTimeString = `${todayDateString}T${e.target.value}`;
         setEventData({
             ...eventData,
-            endTime: new Date(e.target.value)
+            endTime: new Date(dateTimeString)
         })
     }
 
-    function handleChangeDetails(e: React.ChangeEvent<HTMLTextAreaElement>) {
+    function handleChangeDetailsWheelchair(e: React.ChangeEvent<HTMLInputElement>) {
         e.preventDefault();
         // TODO: Input filtering
         setEventData({
             ...eventData,
-            details: e.target.value
+            details: {
+                ...eventData.details,
+                wheelchair: e.target.checked
+            }
+        })
+    }
+
+    function handleChangeDetailsPayment(e: React.ChangeEvent<HTMLInputElement>) {
+        e.preventDefault();
+        // TODO: Input filtering
+        setEventData({
+            ...eventData,
+            details: {
+                ...eventData.details,
+                payment: e.target.checked
+            }
+        })
+    }
+
+    function handleChangeDetailsMeeting(e: React.ChangeEvent<HTMLInputElement>) {
+        e.preventDefault();
+        // TODO: Input filtering
+        setEventData({
+            ...eventData,
+            details: {
+                ...eventData.details,
+                meeting: e.target.value
+            }
+        })
+    }
+
+    function handleChangeDetailsAdditional(e: React.ChangeEvent<HTMLTextAreaElement>) {
+        e.preventDefault();
+        // TODO: Input filtering
+        setEventData({
+            ...eventData,
+            // TODO: I don't want to do this right now
         })
     }
 
@@ -126,7 +173,10 @@ function EventView({ role, event }: EventViewProps) {
                     <input type="text" name="location" value={eventData.location} onChange={handleChangeLocation} />
                     <input type="time" name="startTime" value={eventData.startTime.toLocaleTimeString()} onChange={handleChangeStartTime} />
                     <input type="time" name="endTime" value={eventData.endTime.toLocaleTimeString()} onChange={handleChangeEndTime} />
-                    <textarea name="details" value={eventData.details} onChange={handleChangeDetails} />
+                    <input type="checkbox" name="wheelchair" checked={eventData.details.wheelchair} onChange={handleChangeDetailsWheelchair} />
+                    <input type="checkbox" name="payment" checked={eventData.details.payment} onChange={handleChangeDetailsPayment} />
+                    <input type="text" name="meeting" value={eventData.details.meeting ?? ""} onChange={handleChangeDetailsMeeting} />
+                    {/* TODO: Additional details */}
                 </>
             :
                 <>
@@ -139,7 +189,7 @@ function EventView({ role, event }: EventViewProps) {
                     <p>{event.description}</p>
                     <p>Location: {event.location}</p>
                     <p>Time: {event.startTime.toLocaleTimeString()} - {event.endTime.toLocaleTimeString()}</p>
-                    <p>{event.details}</p>
+                    <p>{event.details.meeting}</p>
                 </>
             }
 
@@ -149,10 +199,14 @@ function EventView({ role, event }: EventViewProps) {
                     {/* I don't want to do this right now.*/}
                 </div>
             :
-                <div>
-                    <p>Contact IC: {event.contactIC.name}</p>
-                    <p>Contact IC email: {event.contactIC.email}</p>
-                </div>
+                <>
+                    {event.contactIC &&
+                        <div>
+                            <p>Contact IC: {event.contactIC.name}</p>
+                            <p>Contact IC email: {event.contactIC.email}</p>
+                        </div>
+                    }
+                </>
             }
 
             {/* Volunteers */}
@@ -222,4 +276,4 @@ function EventView({ role, event }: EventViewProps) {
     )
 }
 
-export default EventView;
+export default EventView
