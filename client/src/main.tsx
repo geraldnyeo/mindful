@@ -18,6 +18,20 @@ import { DashboardComponent } from "./loaders/conditional_components"
 import { protectedRoute, adminRoute, participantRoute, volunteerRoute } from "./loaders/auth_loaders"
 import { indexLoader, dashboardLoader, calendarLoader, eventLoader } from "./loaders/page_loaders"
 
+// Initialize theme on app load
+const initializeTheme = () => {
+  const theme = localStorage.getItem("theme")
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches
+  
+  if (theme === "dark" || (theme === null && prefersDark)) {
+    document.documentElement.classList.add("dark")
+  } else {
+    document.documentElement.classList.remove("dark")
+  }
+}
+
+initializeTheme()
+
 const router = createBrowserRouter([
   {
     path: "/",
