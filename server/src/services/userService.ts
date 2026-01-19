@@ -136,6 +136,22 @@ class UserService {
         let res = await users.findOne({email: email});
         return res;
     }
+
+    async getUserBatch(ids: string[]) {
+        let users = dbClient.collection("users");
+        let res = await users.find({_id: {
+            $in: ids.map(id => new ObjectId(id))
+        }});
+        let docs = await res.toArray();
+        // console.log(res);
+        let userObjs = docs.map(item => User.fromDBJSON(item));
+        console.log(users);
+        let out: Record<string, User> = {};
+        for(const user of userObjs) {
+            if(user.id) out[user.id] = user;
+        }
+        return out;
+    }
 }
 
 // instantiate each UserService individually or share globally?

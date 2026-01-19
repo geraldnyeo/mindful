@@ -1,5 +1,6 @@
 import { ObjectId, type Document, type WithId } from "mongodb";
 import dbClient from "../lib/dbClient.js";
+import { userService } from "./userService.js";
 
 class ActivityDetails {
     wheelchair: boolean;
@@ -269,6 +270,40 @@ class Activity {
             contactIC: this.contactIC,
             volunteers: this.volunteers,
             participants: this.participants
+        }
+    }
+
+    async toClientJSONFullUsers() {
+        let initial = this.toClientJSONFull();
+        const usersToFind = [initial.contactIC, ...initial.volunteers.reduce<string[]>((acc, group) => {
+                return acc.concat(group.users);
+            }, [] as string[]),
+            ...initial.participants.reduce<string[]>((acc, group) => {
+                return acc.concat(group.users);
+            }, [] as string[])
+        ];
+        const usersToFindNoNull = usersToFind.filter(user => user != null);
+        let userMap = await userService.getUserBatch(usersToFindNoNull);
+        let newContactIC = initial.contactIC ? userMap[initial.contactIC] || null : null;
+        let newVolunteersUsers = initial.volunteers.map(group => {
+            return {
+                name: group.name,
+                max_capacity: group.max_capacity,
+                users: group.users.map(user => userMap[user] ? userMap[user] : "invalid")
+            }
+        });
+        let newParticipantssUsers = initial.participants.map(group => {
+            return {
+                name: group.name,
+                max_capacity: group.max_capacity,
+                users: group.users.map(user => userMap[user] ? userMap[user] : "invalid")
+            }
+        });
+        return {
+            ...initial,
+            contactIC: newContactIC,
+            volunteers: newVolunteersUsers,
+            participants: newParticipantssUsers
         }
     }
 }

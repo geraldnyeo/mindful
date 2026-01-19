@@ -66,7 +66,7 @@ async function details(req: Request, res: Response, next: NextFunction) {
         const event = await activityService.getActivity(eventId);
 
         res.status(200); // ok
-        res.send(event.toClientJSONFull());
+        res.send(await event.toClientJSONFullUsers());
         return;
     } catch(e) {
         console.error(e);
