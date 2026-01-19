@@ -379,6 +379,21 @@ class ActivityService {
             [`${groupType + 's'}.$.users`]: userId }})
         );
     }
+
+    async getActivityInRange(start: Date, end: Date) {
+        let activities = dbClient.collection("activities");
+        let found = await activities.find({
+            "time.start": {
+                $lte: end
+            },
+            "time.end": {
+                $gte: start
+            }
+        });
+        let foundArray = await found.toArray();
+        let res = foundArray.map(found => Activity.fromDBJSON(found));
+        return res;
+    }
 }
 
 const activityService = new ActivityService();

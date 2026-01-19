@@ -211,11 +211,37 @@ async function cancel(req: Request, res: Response, next: NextFunction) {
     }
 }
 
+const eventRangeInput = z.object({
+    start: z.coerce.date(),
+    end: z.coerce.date()
+});
+
+async function eventRange(req: Request, res: Response, next: NextFunction) {
+    const parsedInput = eventRangeInput.safeParse(req.body);
+    if(parsedInput.error) {
+        console.error(parsedInput.error);
+        res.sendStatus(400); // bad req
+        return;
+    }
+
+    try {
+        let events = await activityService.getActivityInRange(parsedInput.data.start, parsedInput.data.end);
+        res.status(200); // ok
+        res.send({events: events});
+        return;
+    } catch(e) {
+        console.error(e);
+        res.sendStatus(500); // ise
+        return;
+    }
+}
+
 export {
     create as eventAPICreate,
     details as eventAPIDetails,
     update as eventAPIUpdate,
     del as eventAPIDelete,
     register as eventAPIRegister,
-    cancel as eventAPICancel
+    cancel as eventAPICancel,
+    eventRange as eventAPIRange
 }
