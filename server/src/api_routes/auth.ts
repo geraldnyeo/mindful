@@ -10,7 +10,7 @@ async function signup(req: Request, res: Response, next: NextFunction) {
     
     try {
         const {name, email, role, pw} = req.body;
-        let user = new User(name, email, role, pw);
+        let user = new User(name, email, role, {pw: pw});
         const createdUserDoc = await userService.createUser(user);
         const jwt = authService.generateSessionToken(createdUserDoc.insertedId.toString());
         const userDoc = await userService.getUser(createdUserDoc.insertedId.toString());
