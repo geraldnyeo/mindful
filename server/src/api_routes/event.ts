@@ -226,8 +226,11 @@ async function eventRange(req: Request, res: Response, next: NextFunction) {
 
     try {
         let events = await activityService.getActivityInRange(parsedInput.data.start, parsedInput.data.end);
+        // console.log(events);
+        let out = await Promise.all(events.map(async (e) => {return await e.toClientJSONFullUsers()}));
+        // console.log(out);
         res.status(200); // ok
-        res.send({events: events});
+        res.send({events: out});
         return;
     } catch(e) {
         console.error(e);
