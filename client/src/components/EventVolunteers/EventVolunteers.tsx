@@ -9,7 +9,8 @@ import type { EventSaveStatus } from "../../pages/EventPage/EventPage"
 type EventVolunteersProps = {
     volunteers: Group[],
     role: userRole,
-    saveCallback: (data: any) => Promise<EventSaveStatus>
+	saveCallback: (data: any) => Promise<EventSaveStatus>,
+    registerCallback: (data: any) => Promise<EventSaveStatus>
 }
 
 function EventVolunteers({ volunteers, role, saveCallback }: EventVolunteersProps) {
@@ -26,11 +27,8 @@ function EventVolunteers({ volunteers, role, saveCallback }: EventVolunteersProp
         if (!user) {
             throw new Error("User is null!")
         }
-        
-        const updatedVolunteers = structuredClone(volunteers);
-        updatedVolunteers[selected].users.push(user);
 
-        saveCallback({ volunteers: updatedVolunteers });
+        registerCallback(volunteers[selected].name);
         // TODO: Refresh page
     }
     

@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router"
+
 import "./eventCalendar.css"
 
 /*
@@ -21,27 +23,37 @@ type EventCalendarProps = {
 }
 
 function EventCalendar({ role, events, firstDay }: EventCalendarProps) {
+	const navigate = useNavigate();
+
     const firstDayOfWeek = firstDay.getDay();
     const daysInMonth = new Date(firstDay.getFullYear(), firstDay.getMonth() + 1, 0).getDate();
+	const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-    function test_click_handler() {
-		    console.log("Click handler run from Event Card!");
+    function event_click_handler(eventid) {
+		if (role === "admin") {
+			// open sidebar
+		} else {
+			navigate(`/event/${eventid}`);
+		}
     }
 
     return (
         <div className="event-calendar">
             <div className="event-calendar-header">
-
+		{daysOfWeek.map((day, i) => (
+			<div key={i} className="event-calendar-day-name">{day}</div>
+		))}
             </div>
             <div className="event-calendar-body">
                 {[...Array(firstDayOfWeek)].map((_, i) => (
-                    <div key={i} className="event-calendar-day" />
+                    <div key={i} className="event-calendar-day-empty" />
                 ))}
                 {[...Array(daysInMonth)].map((_, i) => (
                     <div key={i} className="event-calendar-day">
+			<p>{i + 1}</p>
                         {events.filter(event => event.startTime.getDate() === i + 1)
                             .map((event, i) => (
-                                <EventCard event={event} click_handler={test_click_handler} />
+                                <EventCard event={event} click_handler={event_click_handler} />
                             ))
                         }
                     </div>

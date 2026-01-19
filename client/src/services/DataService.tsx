@@ -1,6 +1,6 @@
 import api from "./HTTPService"
 
-import type { User, Group } from "./UserService"
+import type { userRole, User, Group } from "./UserService"
 
 interface Event {
     id: string,
@@ -129,6 +129,24 @@ class DataService {
             // TODO: throw Error
         })
     }
+
+	/**
+	 * Register a volunteer for an event
+	 */
+	register(userRole: userRole, eventid: string, group: string) {
+		api.POST(`/api/event/register/${userRole}`, {
+			event: eventid,
+			group
+		})
+		.then(res => {
+			console.log(res);
+			// TODO
+		})
+		.catch(err => {
+			console.log(err);
+			// TODO;
+		})
+	}
 }
 
 export default new DataService()

@@ -1,12 +1,27 @@
 .event-calendar {
     flex: 1 1 0;
     display: flex;
+	flex-direction: column;
     align-items: stretch;
     box-sizing: border-box;
 }
 
+.event-calendar-header {
+	flex: 0 0 0;
+	display: flex;
+	flex-direction: row;
+}
+
+.event-calendar-day-name {
+	flex: 1 1 0;
+	text-align: center;
+	border: 1px solid black;
+	background-color: #eee;
+}
+
 /* TODO: Figure out why grid item height is not fixed! */
 .event-calendar-body {
+	flex: 1 1 0;
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     grid-template-rows: repeat(auto-fill, 1fr);
@@ -18,4 +33,9 @@
 .event-calendar-day {
     border: 1px solid black;
     background-color: #ddd;
+}
+
+.event-calendar-day-empty {
+    border: 1px solid black;
+    background-color: #ccc;
 }

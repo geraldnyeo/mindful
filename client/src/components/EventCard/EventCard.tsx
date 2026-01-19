@@ -15,7 +15,7 @@ function EventCard({ event, click_handler }: EventCardProps) {
     function handleClick(e: React.MouseEvent<HTMLDivElement>) {
 	e.preventDefault();
 	console.log("EventCard clicked!");
-	click_handler();
+	click_handler(event.id);
     }
 
     return (
