@@ -1,17 +1,9 @@
 import "./eventCard.css"
 
-/**
- * Details required by EventCard only, i.e., public details
- */
-type EventCardFields = {
-    id: string
-    title: string,
-    location: string,
-    startTime: string,
-}
+import type { EventShort } from "../../services/DataService";
 
 type EventCardProps = {
-    event: EventCardFields
+    event: EventShort
     click_handler: () => void
 }
 
@@ -27,10 +19,10 @@ function EventCard({ event, click_handler }: EventCardProps) {
     }
 
     return (
-        <div onClick={handleClick}>
-	    <h3>{event.title}</h3>
-	    <p>Location: {event.location}</p>
-	    <p>Time: {event.startTime}</p>
+        <div className="event-card" onClick={handleClick}>
+            <h3>{event.title}</h3>
+            <p>Location: {event.location}</p>
+            <p>Time: {event.startTime.toLocaleTimeString()} - {event.endTime.toLocaleTimeString()}</p>
         </div>
     )
 }
@@ -38,6 +30,5 @@ function EventCard({ event, click_handler }: EventCardProps) {
 export default EventCard
 
 export type  {
-    EventCardFields,
     EventCardProps
 }

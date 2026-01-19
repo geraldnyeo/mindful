@@ -7,12 +7,20 @@ interface Event {
     title: string,
     description: string,
     location: string,
-    startTime: string,
-    endTime: string,
+    startTime: Date,
+    endTime: Date,
     details: string,
     contactIC: User,
     volunteers: Group[],
     participants: Group[]
+}
+
+interface EventShort {
+    id: string,
+    title: string,
+    location: string,
+    startTime: Date,
+    endTime: Date
 }
 
 /**
@@ -22,10 +30,33 @@ interface Event {
 class DataService {
     /**
      * Get event calendar details by month
-     * @param month 
+     * @param start: datestring in dd/mm/yyyy format
+     * @param end: datestring in dd/mm/yyyy format
      */
-    getEventsByMonthAdmin(month: any) {
-	
+    getEventsByMonthAdmin(start: string, end: string): EventShort[] {
+        api.get(`/api/event`, {
+            params: {
+                "start": start,
+                "end": end
+            }
+        })
+        .then(res => {
+            console.log(res);
+        })
+        .catch(err => {
+            console.log(err);
+            // TODO
+        })
+
+        return [
+            {
+                id: "asdsadsa",
+                title: "Apple Picking",
+                location: "Orchard Road",
+                startTime: new Date("2026-01-17T17:53:38.683+00:00"),
+                endTime: new Date("2026-01-17T17:53:39.683+00:00")
+            }
+        ]
     }
 
     /**
@@ -49,8 +80,8 @@ class DataService {
             title: "Nature Walk",
             description: "desc",
             location: "Park E",
-            startTime: "1430",
-            endTime: "1630",
+            startTime: new Date("2026-01-17T17:53:38.683+00:00"),
+            endTime: new Date("2026-01-17T17:53:39.683+00:00"),
             details: "Meeting point: Park Garden, 1400",
             contactIC: {
                 id: "abca1234",
@@ -103,5 +134,6 @@ class DataService {
 export default new DataService()
 
 export type {
-    Event
+    Event,
+    EventShort
 }

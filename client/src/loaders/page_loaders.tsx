@@ -3,7 +3,7 @@ import type { LoaderFunctionArgs } from "react-router"
 
 import AuthService from "../services/AuthService"
 import DataService from "../services/DataService"
-import type { Event } from "../services/DataService"
+import type { Event, EventShort } from "../services/DataService"
 import type { userRole } from "../services/UserService"
 
 /**
@@ -28,9 +28,38 @@ function dashboardLoader(): { userRole: userRole } {
  * Loader for /calendar
  * @returns events //todo
  */
-function calendarLoader() {
-    return {
-	    events: []
+function calendarLoader({ params }: LoaderFunctionArgs): {
+    userRole: userRole,
+    events: EventShort[],
+    firstDay: Date,
+} | void {
+    const userRole = AuthService.getUserRole();
+    const { monthyear } = params; // MM-YYYY
+    if (!monthyear) { 
+        redirect("/error/404-resource-not-found")
+        return;
+    }
+    
+    try {
+        const parts = monthyear.split("-")
+        const month = parseInt(parts[0]);
+        const year = parseInt(parts[1]);
+        const startDate = new Date(year, month - 1, 1);
+        const endDate = new Date(year, month, 0);
+
+        const events: EventShort[] = DataService.getEventsByMonthAdmin(
+            startDate.toLocaleDateString("en-GB"), 
+            endDate.toLocaleDateString("en-GB")
+        );
+
+        return {
+            userRole,
+            events,
+            firstDay: startDate,
+        }
+    } catch (error) {
+        redirect("/error/404-resource-not-found")
+        return;
     }
 }
 

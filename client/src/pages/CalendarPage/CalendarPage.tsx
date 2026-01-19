@@ -5,11 +5,11 @@ import "./calendarPage.css"
 import EventCalendar from "../../components/EventCalendar/EventCalendar"
 
 function CalendarPage() {
-    const { events } = useLoaderData();
+    const { userRole, events, firstDay } = useLoaderData();
 
     return (
-        <div>
-	    <EventCalendar events={events} />
+        <div className="calendar-page-root">
+	        <EventCalendar role={userRole} events={events} firstDay={firstDay} />
         </div>
     )
 }

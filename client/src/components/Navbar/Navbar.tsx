@@ -7,13 +7,16 @@ type NavbarProps = {
 }
 
 function Navbar({ userType }: NavbarProps) {
+    const today = new Date();
+    const monthyear = `${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getFullYear().toString()}`;
+
     return (
         <nav>
-	    <Link to="/dashboard">Home</Link>
-	    <Link to="/calendar">Events</Link>
-            { userType === "admin" && 
-                <Link to="/analytics">Analytics</Link>
-            }
+            <Link to="/dashboard">Home</Link>
+            <Link to={`/calendar/${monthyear}`}>Events</Link>
+                { userType === "admin" && 
+                    <Link to="/analytics">Analytics</Link>
+                }
         </nav>
     )
 }

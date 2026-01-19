@@ -35,11 +35,11 @@ const router = createBrowserRouter([
           // Routes which are available to all users
           { 
             path: "dashboard",
-	    loader: dashboardLoader,
+	          loader: dashboardLoader,
             Component: DashboardComponent
           },
 	  {
-	    path: "calendar",
+	    path: "calendar/:monthyear",
 	    loader: calendarLoader,
 	    Component: CalendarPage
 	  },

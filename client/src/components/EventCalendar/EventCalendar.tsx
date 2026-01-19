@@ -1,6 +1,3 @@
-import EventCard from "../EventCard/EventCard"
-import type { EventCardProps, EventCardFields } from "../EventCard/EventCard"
-
 import "./eventCalendar.css"
 
 /*
@@ -13,23 +10,43 @@ EventCalendar will be the only component which interacts with EventCards
 So it is the only thing which needs EventCardProps and EventCardDetails
 */
 
-function EventCalendar() {
-    const test_event: EventCardFields = {
-		id: "qewr1234",
-		title: "Nature Walk",
-		startTime: "16/01/2026 1430",
-		location: "Bukit Batok Nature Reserve",
-    }
+import EventCard from "../EventCard/EventCard"
+import type { EventShort } from "../../services/DataService";
+import type { userRole } from "../../services/UserService";
+
+type EventCalendarProps = {
+    role: userRole,
+    events: EventShort[],
+    firstDay: Date,
+}
+
+function EventCalendar({ role, events, firstDay }: EventCalendarProps) {
+    const firstDayOfWeek = firstDay.getDay();
+    const daysInMonth = new Date(firstDay.getFullYear(), firstDay.getMonth() + 1, 0).getDate();
 
     function test_click_handler() {
-		console.log("Click handler run from Event Card!");
+		    console.log("Click handler run from Event Card!");
     }
 
     return (
-        <div>
-	    {/* Event Card testing */}
-	    {/* TODO: Proper grid layout for calendar */}
-	    <EventCard event={test_event} click_handler={test_click_handler} />
+        <div className="event-calendar">
+            <div className="event-calendar-header">
+
+            </div>
+            <div className="event-calendar-body">
+                {[...Array(firstDayOfWeek)].map((_, i) => (
+                    <div key={i} className="event-calendar-day" />
+                ))}
+                {[...Array(daysInMonth)].map((_, i) => (
+                    <div key={i} className="event-calendar-day">
+                        {events.filter(event => event.startTime.getDate() === i + 1)
+                            .map((event, i) => (
+                                <EventCard event={event} click_handler={test_click_handler} />
+                            ))
+                        }
+                    </div>
+                ))}
+            </div>
         </div>
     )
 }

@@ -1,0 +1,17 @@
+.default-layout-root {
+    display: flex;
+    flex-direction: row;
+    flex-basis: 1;
+    width: 100%;
+}
+
+.nav-wrapper {
+    flex: 1 1 0;
+    height: 100%;
+}
+
+.content-wrapper {
+    flex: 4 1 0;
+    display: flex;
+    height: 100%;
+}
