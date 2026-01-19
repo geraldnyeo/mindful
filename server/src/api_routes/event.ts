@@ -144,9 +144,78 @@ async function del(req: Request, res: Response, next: NextFunction) {
 
 } 
 
+const registerInput = z.object({
+    event: z.string(),
+    group: z.string()
+});
+
+async function register(req: Request, res: Response, next: NextFunction) {
+    const parsedInput = registerInput.safeParse(req.body);
+    if(parsedInput.error) {
+        console.error(parsedInput.error);
+        res.sendStatus(400); // bad req
+        return;
+    }
+
+    const groupType = req.params.groupType;
+    if(!groupType || !(groupType == "volunteer" || groupType == "participant")) {
+        res.sendStatus(400); // bad req
+        return;
+    }
+
+    try {
+        let jwt = await authService.checkSessionToken(req.cookies['session']);
+        if(!jwt || !jwt.payload.sub) {
+            console.log("no jwt");
+            throw new Error("unauth");
+        }
+        const parsedInputData = parsedInput.data;
+        await activityService.addUser(parsedInputData.event, jwt.payload.sub, parsedInputData.group, groupType);
+        res.sendStatus(200); // ok
+        return;
+    } catch(e) {
+        console.error(e);
+        res.sendStatus(500); // ise
+        return;
+    }
+}
+
+async function cancel(req: Request, res: Response, next: NextFunction) {
+    const parsedInput = registerInput.safeParse(req.body);
+    if(parsedInput.error) {
+        console.error(parsedInput.error);
+        res.sendStatus(400); // bad req
+        return;
+    }
+
+    const groupType = req.params.groupType;
+    if(!groupType || !(groupType == "volunteer" || groupType == "participant")) {
+        res.sendStatus(400); // bad req
+        return;
+    }
+
+    try {
+        let jwt = await authService.checkSessionToken(req.cookies['session']);
+        if(!jwt || !jwt.payload.sub) {
+            console.log("no jwt");
+            throw new Error("unauth");
+        }
+        const parsedInputData = parsedInput.data;
+        await activityService.removeUser(parsedInputData.event, jwt.payload.sub, parsedInputData.group, groupType);
+        res.sendStatus(200); // ok
+        return;
+    } catch(e) {
+        console.error(e);
+        res.sendStatus(500); // ise
+        return;
+    }
+}
+
 export {
     create as eventAPICreate,
     details as eventAPIDetails,
     update as eventAPIUpdate,
-    del as eventAPIDelete
+    del as eventAPIDelete,
+    register as eventAPIRegister,
+    cancel as eventAPICancel
 }

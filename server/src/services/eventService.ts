@@ -306,6 +306,44 @@ class ActivityService {
         let activities = dbClient.collection("activities");
         await activities.replaceOne({_id: new ObjectId(id)}, activity.toDBJSON()); 
     }
+
+    async addUser(eventId: string, userId: string, group: string, groupType: "volunteer" | "participant") {
+        let activities = dbClient.collection("activities");
+        let queryDoc = {
+            _id: new ObjectId(eventId),
+            [groupType + 's']: {
+                $elemMatch: {
+                    name: group
+                }
+            }
+        }
+        let activity = await activities.findOne(queryDoc);
+        console.log(await activities.findOne(queryDoc));
+        console.log(
+            // @ts-ignore
+        await activities.updateMany(queryDoc, {$push: {
+            [`${groupType + 's'}.$.users`]: userId }})
+        );
+    }
+
+    async removeUser(eventId: string, userId: string, group: string, groupType: "volunteer" | "participant") {
+        let activities = dbClient.collection("activities");
+        let queryDoc = {
+            _id: new ObjectId(eventId),
+            [groupType + 's']: {
+                $elemMatch: {
+                    name: group
+                }
+            }
+        }
+        let activity = await activities.findOne(queryDoc);
+        console.log(await activities.findOne(queryDoc));
+        console.log(
+            // @ts-ignore
+        await activities.updateMany(queryDoc, {$pull: {
+            [`${groupType + 's'}.$.users`]: userId }})
+        );
+    }
 }
 
 const activityService = new ActivityService();
