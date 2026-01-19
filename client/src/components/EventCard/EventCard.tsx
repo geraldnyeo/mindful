@@ -3,8 +3,8 @@ import "./eventCard.css"
 import type { EventShort } from "../../services/DataService";
 
 type EventCardProps = {
-    event: EventShort
-    click_handler: () => void
+    event: EventShort,
+    click_handler: (eventid: string) => void
 }
 
 /**
@@ -13,9 +13,9 @@ type EventCardProps = {
  */
 function EventCard({ event, click_handler }: EventCardProps) {
     function handleClick(e: React.MouseEvent<HTMLDivElement>) {
-	e.preventDefault();
-	console.log("EventCard clicked!");
-	click_handler(event.id);
+	    e.preventDefault();
+	    console.log("EventCard clicked!");
+	    click_handler(event.id);
     }
 
     return (

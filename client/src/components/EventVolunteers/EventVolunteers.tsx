@@ -13,7 +13,7 @@ type EventVolunteersProps = {
     registerCallback: (data: any) => Promise<EventSaveStatus>
 }
 
-function EventVolunteers({ volunteers, role, saveCallback }: EventVolunteersProps) {
+function EventVolunteers({ volunteers, role, saveCallback, registerCallback }: EventVolunteersProps) {
     const [selected, setSelected] = useState<number>(0);
 
     async function handleAddVolunteerGroup(e: React.MouseEvent<HTMLButtonElement>) {

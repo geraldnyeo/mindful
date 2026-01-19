@@ -33,7 +33,7 @@ class DataService {
      * @param start: datestring in dd/mm/yyyy format
      * @param end: datestring in dd/mm/yyyy format
      */
-    getEventsByMonthAdmin(start: string, end: string): EventShort[] {
+    getEventsByMonthAdmin(start: string, end: string): Event[] {
         api.get(`/api/event`, {
             params: {
                 "start": start,
@@ -52,9 +52,40 @@ class DataService {
             {
                 id: "asdsadsa",
                 title: "Apple Picking",
+                description: "I like apples",
                 location: "Orchard Road",
                 startTime: new Date("2026-01-17T17:53:38.683+00:00"),
-                endTime: new Date("2026-01-17T17:53:39.683+00:00")
+                endTime: new Date("2026-01-17T17:53:39.683+00:00"),
+                details: "Meeting point: Park Garden, 1400",
+                contactIC: {
+                    id: "abca1234",
+                    name: "Alice",
+                    email: "a@b.com",
+                    role: "admin",
+                    joinedDate: "14/12/2000"
+                },
+                volunteers: [{
+                    name: "Group 1",
+                    max_capacity: 10,
+                    users: [{
+                        id: "defghijkl",
+                        name: "Ben",
+                        email: "b@c.com",
+                        role: "volunteer",
+                        joinedDate: "07/03/2024"
+                    }]
+                }],
+                participants: [{
+                    name: "Group 1",
+                    max_capacity: 5,
+                    users: [{
+                        id: "uinlfsdfs",
+                        name: "Carla",
+                        email: "c@d.com",
+                        role: "participant",
+                        joinedDate: "15/07/2022"
+                    }]
+                }]
             }
         ]
     }
@@ -134,7 +165,7 @@ class DataService {
 	 * Register a volunteer for an event
 	 */
 	register(userRole: userRole, eventid: string, group: string) {
-		api.POST(`/api/event/register/${userRole}`, {
+		api.post(`/api/event/register/${userRole}`, {
 			event: eventid,
 			group
 		})

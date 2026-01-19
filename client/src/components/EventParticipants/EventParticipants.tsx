@@ -55,7 +55,7 @@ function EventParticipants({ participants, role, saveCallback }: EventParticipan
                         ))}
                     </ul>
                 }
-                {role === "volunteer" &&
+                {role === "participant" &&
                     <button onClick={handleJoinGroup}>Join Group</button>
                 }
             </div>

@@ -6,10 +6,9 @@ import EventDetails from "../../components/EventDetails/EventDetails";
 import EventAdmin from "../../components/EventAdmin/EventAdmin";
 import EventVolunteers from "../../components/EventVolunteers/EventVolunteers";
 import EventParticipants from "../../components/EventParticipants/EventParticipants";
+import EventView from "../../components/EventView/EventView";
 
 import DataService from "../../services/DataService";
-
-import type { User } from "../../services/UserService";
 
 type EventSaveStatus = {
     "success": boolean,
@@ -19,30 +18,30 @@ type EventSaveStatus = {
 function EventPage() {
     const { userRole, event } = useLoaderData();
 
-    async function saveCallback(data: any): Promise<EventSaveStatus> {
-        try {
-            await DataService.putEvent({
-                ...event,
-                ...data
-            })
-            return { "success": true, error: "" }
-        } catch (error) {
-            return { "success": false, error: "Unable to save data." }
-        }
-    }
+    // async function saveCallback(data: any): Promise<EventSaveStatus> {
+    //     try {
+    //         await DataService.putEvent({
+    //             ...event,
+    //             ...data
+    //         })
+    //         return { "success": true, error: "" }
+    //     } catch (error) {
+    //         return { "success": false, error: "Unable to save data." }
+    //     }
+    // }
 
-	async function registerVolunteer(group: string): Promise<EventSaveStatus> {
-		try {
-			await DataService.register(userRole, event.id, group);
-			return { "success": true, error: "" }
-		} catch (error) {
-			return { "success": false, error: "Unable to register." }
-		}
-}
+	// async function registerVolunteer(group: string): Promise<EventSaveStatus> {
+	//      try {
+	// 		    await DataService.register(userRole, event.id, group);
+	// 		    return { "success": true, error: "" }
+	// 	    } catch (error) {
+	// 		    return { "success": false, error: "Unable to register." }
+	// 	    }
+    // }
 
     return (
         <div>
-            {/* TODO: Reduce event props scopes for each component */}
+            {/* TODO: Reduce event props scopes for each component 
             <EventDetails event={event} editable={userRole === "admin"} saveCallback={saveCallback} />
             <EventAdmin event={event} editable={userRole === "admin"} saveCallback={saveCallback} />
             {(userRole === "admin" || userRole === "volunteer") &&
@@ -51,6 +50,10 @@ function EventPage() {
             {(userRole === "admin" || userRole === "participant") &&
                 <EventParticipants participants={event.participants} role={userRole} saveCallback={saveCallback} />
             }
+            */}
+
+            {/* New */}
+            <EventView role={userRole} event={event} />
         </div>
     )
 }

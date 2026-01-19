@@ -30,7 +30,7 @@ function dashboardLoader(): { userRole: userRole } {
  */
 function calendarLoader({ params }: LoaderFunctionArgs): {
     userRole: userRole,
-    events: EventShort[],
+    events: Event[],
     firstDay: Date,
 } | void {
     const userRole = AuthService.getUserRole();
@@ -47,7 +47,7 @@ function calendarLoader({ params }: LoaderFunctionArgs): {
         const startDate = new Date(year, month - 1, 1);
         const endDate = new Date(year, month, 0);
 
-        const events: EventShort[] = DataService.getEventsByMonthAdmin(
+        const events: Event[] = DataService.getEventsByMonthAdmin(
             startDate.toLocaleDateString("en-GB"), 
             endDate.toLocaleDateString("en-GB")
         );

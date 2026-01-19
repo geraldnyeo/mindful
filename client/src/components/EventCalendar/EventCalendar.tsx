@@ -29,7 +29,7 @@ function EventCalendar({ role, events, firstDay }: EventCalendarProps) {
     const daysInMonth = new Date(firstDay.getFullYear(), firstDay.getMonth() + 1, 0).getDate();
 	const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-    function event_click_handler(eventid) {
+    function event_click_handler(eventid: string) {
 		if (role === "admin") {
 			// open sidebar
 		} else {
