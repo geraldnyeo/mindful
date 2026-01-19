@@ -125,8 +125,28 @@ async function update(req: Request, res: Response, next: NextFunction) {
     }
 }
 
+async function del(req: Request, res: Response, next: NextFunction) {
+    const eventId = req.params.id;
+    if(!eventId || typeof(eventId) != 'string') {
+        res.sendStatus(400); // bad req
+        return;
+    }
+
+    try {
+        await activityService.deleteActivity(eventId);
+        res.sendStatus(200); // ok
+        return;
+    } catch(e) {
+        console.error(e);
+        res.sendStatus(500); // ise
+        return;
+    }
+
+} 
+
 export {
     create as eventAPICreate,
     details as eventAPIDetails,
-    update as eventAPIUpdate
+    update as eventAPIUpdate,
+    del as eventAPIDelete
 }

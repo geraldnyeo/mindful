@@ -10,7 +10,7 @@ import type { Request, Response } from 'express';
 import cookieParser from 'cookie-parser';
 import { isAdmin, isLoggedIn, needsJSON } from './lib/middlewares.js';
 import { userAPIMe } from './api_routes/user.js';
-import { eventAPICreate, eventAPIDetails, eventAPIUpdate } from './api_routes/event.js';
+import { eventAPICreate, eventAPIDelete, eventAPIDetails, eventAPIUpdate } from './api_routes/event.js';
 
 const app = express();
 
@@ -54,6 +54,8 @@ app.post('/api/event/create', isLoggedIn, isAdmin, needsJSON, eventAPICreate);
 app.get('/api/event/details/:id', isLoggedIn, eventAPIDetails);
 
 app.put('/api/event/update', isLoggedIn, isAdmin, needsJSON, eventAPIUpdate);
+
+app.delete('/api/event/delete/:id', isLoggedIn, isAdmin, eventAPIDelete);
 
 // Upgrade to HTTPS as we will be handling credentials
 const httpsOptions = {
