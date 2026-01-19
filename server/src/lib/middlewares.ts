@@ -34,17 +34,21 @@ async function isAdmin(req: Request, res: Response, next: NextFunction) {
     try {
         let jwt = await authService.checkSessionToken(req.cookies['session']);
         if(!jwt || !jwt.payload.sub) {
+            console.log("no jwt");
             throw new Error("unauth");
         }
 
         let userDoc = await userService.getUser(jwt.payload.sub);
-        if(!userDoc || userDoc.role || userDoc.role !== "admin") {
+        if(!userDoc || !userDoc.role || userDoc.role != "admin") {
+            console.log(userDoc);
             throw new Error("unauth");
         }
     } catch(e) {
         res.sendStatus(401); // unauth
         return;
     }
+
+    next();
 }
 
 export {

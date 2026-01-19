@@ -20,10 +20,10 @@ class ActivityUserGroup {
     max_capacity: number;
     users: string[];
 
-    constructor(name: string, max_capacity: number) {
+    constructor(name: string, max_capacity: number, users: string[] = []) {
         this.name = name;
         this.max_capacity = max_capacity;
-        this.users = [];
+        this.users = users;
     }
 
     addUser(id: string) {
@@ -67,7 +67,7 @@ class ActivityUserGroup {
 type ActivityDefaultOptions = {
     id?: string | null;
     details?: ActivityDetails;
-    contactIC?: string;
+    contactIC?: string | null;
     volunteerGroups?: ActivityUserGroup[];
     participantGroups?: ActivityUserGroup[];
 }
@@ -301,8 +301,13 @@ class ActivityService {
         }
         return Activity.fromDBJSON(res);
     }
+
+    async setActivity(id: string, activity: Activity) {
+        let activities = dbClient.collection("activities");
+        await activities.replaceOne({_id: new ObjectId(id)}, activity.toDBJSON()); 
+    }
 }
 
 const activityService = new ActivityService();
 
-export {ActivityDetails, Activity, activityService};
+export {ActivityDetails, Activity, ActivityUserGroup, activityService};

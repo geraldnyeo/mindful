@@ -1,5 +1,6 @@
+import { group } from "node:console";
 import authService from "../services/authService.js";
-import { Activity, activityService } from "../services/eventService.js";
+import { Activity, activityService, ActivityUserGroup } from "../services/eventService.js";
 import { userService, User } from "../services/userService.js";
 import type { NextFunction, Request, Response } from "express";
 import * as z from 'zod';
@@ -7,18 +8,15 @@ import * as z from 'zod';
 const detailInput = z.object({
     wheelchair: z.boolean(),
     payment: z.boolean(),
-    meeting: z.string(),
+    meeting: z.nullable(z.string()),
     additional: z.array(z.record(z.string(), z.string()))
 });
 
-// {
-// 	title: string,
-// 	location: string,
-// 	startTime: Date,
-// 	endTime: Date,
-// 	description: string,
-// 	details: Details | null
-// }
+const groupInput = z.object({
+    name:  z.string(),
+    max_capacity: z.int().gt(0),
+    users: z.array(z.string())
+});
 
 const createInput = z.object({
     title: z.string(),
@@ -77,7 +75,58 @@ async function details(req: Request, res: Response, next: NextFunction) {
     }
 }
 
+const updateInput = z.object({
+	id: z.string(),
+	title: z.string(),
+	location: z.string(),
+	startTime: z.coerce.date(),
+	endTime: z.coerce.date(),
+	description: z.string(),
+	details: detailInput,
+	contactIC: z.nullable(z.string()),
+	volunteers: z.array(groupInput),
+	participants: z.array(groupInput)
+});
+
+async function update(req: Request, res: Response, next: NextFunction) {
+    console.log("updating");
+    const parsedInput = updateInput.safeParse(req.body);
+    if(parsedInput.error) {
+        console.error(parsedInput.error);
+        res.sendStatus(400); // bad req
+        return;
+    }
+
+    const parsedInputData = parsedInput.data;
+    const activity = new Activity(parsedInputData.title, 
+                                  parsedInputData.location,
+                                  parsedInputData.startTime,
+                                  parsedInputData.endTime,
+                                  parsedInputData.description,
+                                  {
+                                    contactIC: parsedInputData.contactIC,
+                                    details: parsedInputData.details,
+                                    id: parsedInputData.id,
+                                    participantGroups: parsedInputData.participants.map(group => new ActivityUserGroup(group.name, group.max_capacity, group.users)),
+                                    volunteerGroups: parsedInputData.volunteers.map(group => new ActivityUserGroup(group.name, group.max_capacity, group.users))
+                                  }
+    );
+
+    console.log(activity);
+
+    try {
+        await activityService.setActivity(parsedInputData.id, activity);
+        res.sendStatus(200);
+        return;
+    } catch(e) {
+        console.error(e);
+        res.sendStatus(500);
+        return;
+    }
+}
+
 export {
     create as eventAPICreate,
-    details as eventAPIDetails
+    details as eventAPIDetails,
+    update as eventAPIUpdate
 }
