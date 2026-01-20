@@ -1,6 +1,6 @@
 # Mindful - Volunteer Management System
 
-A modern, full-stack volunteer management system designed for MINDS organization. Mindful helps coordinate volunteers, track events, manage participants, and streamline volunteer engagement through an intuitive web application.
+Mindful helps coordinate volunteers, track events, manage participants, and streamline volunteer engagement through an intuitive web application.
 
 ## Problem Statement
 
