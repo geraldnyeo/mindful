@@ -18,7 +18,7 @@ const app = express();
 // Define client origin in .env
 const corsOptions = {
     origin: CLIENTORIGIN,
-    methods: ["GET", "POST", "PUT"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
 }
 
