@@ -2,6 +2,9 @@
 
 A modern, full-stack volunteer management system designed for MINDS organization. Mindful helps coordinate volunteers, track events, manage participants, and streamline volunteer engagement through an intuitive web application.
 
+## Problem Statement
+
+How might we reduce friction in activity sign-ups for both individuals and caregivers, while reducing manual effort for staff in managing and consolidating registration data?
 
 ## Features
 
@@ -136,6 +139,9 @@ mindful/
    ```
 
 2. **Setup Backend**
+
+   For more information, see the README in /server
+
    ```bash
    cd server
    npm install
@@ -154,13 +160,15 @@ mindful/
    MONGODBSTRING="mongodb://localhost:27017/mindful"
    ```
 
+   Place SSL certificate and private key in /server
+
    Build and start the server:
    ```bash
    npm run build
    npm run start
    ```
 
-   For development with auto-restart:
+   To build and start at the same time:
    ```bash
    npm run dev
    ```
@@ -244,7 +252,7 @@ npm run nuke-populate-db
 - `/volunteer` - Volunteer-specific dashboard
 - `/participant` - Participant-specific dashboard
 
-## API Endpoints
+## API Endpoints On Server
 
 ### Authentication
 - `POST /api/auth/signup` - Register new user
@@ -282,74 +290,6 @@ npm run nuke-populate-db
 2. Implement business logic in `server/src/services/`
 3. Register route in `server/src/app.ts`
 
-### Code Style
-
-- Use TypeScript for type safety
-- Use functional components with hooks
-- Use Tailwind CSS for styling
-- Follow React Router data loader patterns
-- Keep components small and focused
-- Use meaningful variable and function names
-
-### Debugging
-
-**Browser DevTools:**
-- Open Network tab to inspect API calls
-- Check Console for error messages
-- Use React Developer Tools extension
-
-**Server Logs:**
-- Backend logs appear in terminal where server is running
-- Check MongoDB connection in logs
-
-### Building for Production
-
-**Frontend:**
-```bash
-cd client
-npm run build
-```
-
-**Backend:**
-```bash
-cd server
-npm run build
-```
-
-## Contributing
-
-### Project Guidelines
-
-1. **Branching**: Create feature branches from `main`
-   ```bash
-   git checkout -b feature/feature-name
-   ```
-
-2. **Code Review**: Submit pull requests for review
-
-3. **Testing**: Test features locally before committing
-
-4. **Commits**: Write clear, descriptive commit messages
-
-### Common Tasks
-
-**Linting:**
-```bash
-cd client
-npm run lint
-```
-
-**TypeScript Check:**
-```bash
-# Frontend
-cd client
-npx tsc -b
-
-# Backend
-cd server
-npm run build
-```
-
 ## Troubleshooting
 
 ### Server won't start
@@ -370,15 +310,3 @@ npm run build
 - Clear browser cookies and localStorage
 - Check JWT secret is consistent between restarts
 - Verify HttpOnly cookies are being set (check browser DevTools)
-
-## License
-
-ISC
-
-## Contact & Support
-
-For issues and questions, please open an issue on GitHub.
-
----
-
-**Built for MINDS Organization - Making Volunteer Management Mindful** 🧠💚
