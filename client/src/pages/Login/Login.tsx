@@ -41,15 +41,22 @@ function Login() {
 		}
 
 		try {
-			AuthService.login(loginData);
+			await AuthService.login(loginData);
 			setLoginData({
 				email: "",
 				pw: "",
 			});
 			setErrors({});
-			navigate("/")
-		} catch (error) {
-			setErrors({general: "Login failed. Please try again."});
+			
+			// Redirect based on user role
+			const userRole = AuthService.getUserRole();
+			if (userRole === "admin") {
+				navigate("/admin");
+			} else {
+				navigate("/dashboard");
+			}
+		} catch (error: any) {
+			setErrors({general: error.message || "Login failed. Please try again."});
 		}
     }
 

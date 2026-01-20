@@ -54,7 +54,7 @@ function Signup() {
 		}
 
 		try {
-			AuthService.signup(signupData);
+			await AuthService.signup(signupData);
 			setSignupData({
 				email: "",
 				name: "",
@@ -62,9 +62,11 @@ function Signup() {
 				role: "guest"
 			});
 			setErrors({});
-			navigate("/")
-		} catch (error) {
-			setErrors({general: "Sign up failed. Please try again."});
+			
+			// Redirect to dashboard after successful signup
+			navigate("/dashboard");
+		} catch (error: any) {
+			setErrors({general: error.message || "Sign up failed. Please try again."});
 		}
     }
 

@@ -1,5 +1,3 @@
-import { redirect } from "react-router"
-
 import api from "./HTTPService"
 import type { User, userRole } from "./UserService"
 
@@ -22,43 +20,56 @@ interface LoginData {
 class AuthService {
     /**
      * Sends signup request to backend
+     * @throws Error with message if signup fails
+     * @returns Promise<User> - User data from backend
      */
-    signup(data: SignupData) {
-        api.post("api/auth/signup", data)
-        .then(res => {
+    async signup(data: SignupData): Promise<User> {
+        try {
+            const res = await api.post("api/auth/signup", data);
             const user: User = res.data;
-            console.log(user);
+            console.log("Signup successful:", user);
             localStorage.setItem('user', JSON.stringify(user));
-        })
-        .catch(err => {
-            console.log(err);
-            // TODO
-        })
+            return user;
+        } catch (err: any) {
+            console.error("Signup error:", err);
+            const errorMessage = err.response?.data?.error || err.message || "Signup failed";
+            throw new Error(errorMessage);
+        }
     }
 
     /**
      * Sends login request to backend
+     * @throws Error with message if login fails
+     * @returns Promise<User> - User data from backend
      */
-    login(data: LoginData) {
-        api.post("api/auth/login", data)
-        .then(res => {
+    async login(data: LoginData): Promise<User> {
+        try {
+            const res = await api.post("api/auth/login", data);
             const user: User = res.data;
+            console.log("Login successful:", user);
             localStorage.setItem('user', JSON.stringify(user));
-        })
-        .catch(err => {
-            console.log(err);
-            // TODO
-        })
+            return user;
+        } catch (err: any) {
+            console.error("Login error:", err);
+            const errorMessage = err.response?.data?.error || err.message || "Login failed";
+            throw new Error(errorMessage);
+        }
     }
 
     /**
      * Fetches user role
+     * @returns userRole - Current user's role or "guest" if not authenticated
      */
-    getUserRole() {
+    getUserRole(): userRole {
         const userData = localStorage.getItem('user');
         if (userData) {
-            const user: User = JSON.parse(userData);
-            return user.role;
+            try {
+                const user: User = JSON.parse(userData);
+                return user.role;
+            } catch (e) {
+                console.error("Error parsing user data:", e);
+                return "guest";
+            }
         } else {
             return "guest"
         }
@@ -66,17 +77,30 @@ class AuthService {
 
     /**
      * Fetches user data (all)
+     * @returns User | null - Current user data or null if not authenticated
      */
-    getUser() {
+    getUser(): User | null {
         const userData = localStorage.getItem("user");
         if (userData) {
-            const user: User = JSON.parse(userData);
-            return user;
+            try {
+                const user: User = JSON.parse(userData);
+                return user;
+            } catch (e) {
+                console.error("Error parsing user data:", e);
+                return null;
+            }
         } else {
             return null
         }
     }
 
+    /**
+     * Logout user - clear session and local storage
+     */
+    logout(): void {
+        localStorage.removeItem('user');
+        console.log("User logged out");
+    }
 }
 
 export default new AuthService()
