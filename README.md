@@ -10,11 +10,8 @@ How might we reduce friction in activity sign-ups for both individuals and careg
 
 - 🔐 **Secure Authentication**: User registration and login with role-based access control
 - 👥 **Role-Based Access**: Three user roles - Admin, Volunteer, and Participant with specific permissions
-- 📅 **Event Management**: Create, view, and manage volunteer events with detailed information
+- 📅 **Event Management**: Create, view, and manage events with detailed information
 - 🗓️ **Calendar View**: Visual calendar interface to browse events by month
-- 🌓 **Dark Mode**: Built-in dark/light theme toggle with persistent preferences
-- 📱 **Responsive Design**: Mobile-first design that works seamlessly on all devices
-- 🎨 **Modern UI**: Clean, professional interface with Tailwind CSS and Lucide icons
 - 🔒 **JWT Sessions**: Secure session management with HttpOnly cookies
 - 💾 **MongoDB Integration**: Robust data persistence with MongoDB
 
